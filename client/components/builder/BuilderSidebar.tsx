@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeCustomizer } from './ThemeCustomizer';
+import { CodeEditor } from './CodeEditor';
 import { ecommerceTemplates, generateTemplateElements } from './EcommerceTemplates';
 
 export function BuilderSidebar() {
@@ -511,7 +512,7 @@ export function BuilderSidebar() {
       case 'versions':
         return <div className="p-4">Version control panel coming soon...</div>;
       case 'code':
-        return <div className="p-4">Custom code editor coming soon...</div>;
+        return <CodeEditor />;
       case 'settings':
         return <div className="p-4">Settings panel coming soon...</div>;
       default:
