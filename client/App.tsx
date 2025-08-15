@@ -157,7 +157,9 @@ function App() {
           <DomainProvider>
             <IntegrationsProvider>
               <UserManagementProvider>
-                <AppContent />
+                <HelpProvider>
+                  <AppContent />
+                </HelpProvider>
               </UserManagementProvider>
             </IntegrationsProvider>
           </DomainProvider>
