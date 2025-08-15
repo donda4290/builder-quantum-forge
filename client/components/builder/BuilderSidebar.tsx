@@ -30,9 +30,12 @@ import {
   Plus,
   Trash2,
   Copy,
-  FolderOpen
+  FolderOpen,
+  Template
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ThemeCustomizer } from './ThemeCustomizer';
+import { ecommerceTemplates, generateTemplateElements } from './EcommerceTemplates';
 
 export function BuilderSidebar() {
   const { 
@@ -406,16 +409,63 @@ export function BuilderSidebar() {
           </Button>
         </div>
       </div>
-      
+
       <ScrollArea className="flex-1">
+        {/* E-commerce Templates */}
+        <div className="p-4 border-b">
+          <h4 className="font-medium text-sm mb-3 flex items-center">
+            <Template className="h-4 w-4 mr-2" />
+            E-commerce Templates
+          </h4>
+          <div className="space-y-2">
+            {Object.entries(ecommerceTemplates).map(([key, template]) => (
+              <Button
+                key={key}
+                variant="outline"
+                size="sm"
+                className="w-full justify-start h-auto p-3"
+                onClick={() => {
+                  const elements = generateTemplateElements(key);
+                  const newPage = {
+                    id: `page-${Date.now()}`,
+                    name: template.name,
+                    slug: `/${key}`,
+                    template: key as any,
+                    elements,
+                    seo: {
+                      title: template.name,
+                      description: template.description,
+                      keywords: []
+                    },
+                    customCSS: '',
+                    customJS: '',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    versions: []
+                  };
+                  // Add the page and load it
+                  createPage(template.name, key);
+                }}
+              >
+                <div className="text-left">
+                  <div className="font-medium text-xs">{template.name}</div>
+                  <div className="text-xs text-muted-foreground">{template.description}</div>
+                </div>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Existing Pages */}
         <div className="p-4 space-y-2">
+          <h4 className="font-medium text-sm mb-3">Your Pages</h4>
           {pages.map((page) => (
             <div
               key={page.id}
               className={cn(
                 "group border rounded-lg p-3 cursor-pointer transition-colors",
-                currentPage?.id === page.id 
-                  ? "bg-primary/10 border-primary" 
+                currentPage?.id === page.id
+                  ? "bg-primary/10 border-primary"
                   : "hover:bg-muted/50"
               )}
               onClick={() => loadPage(page.id)}
@@ -457,7 +507,7 @@ export function BuilderSidebar() {
       case 'pages':
         return renderPagesPanel();
       case 'theme':
-        return <div className="p-4">Theme customization panel coming soon...</div>;
+        return <ThemeCustomizer />;
       case 'versions':
         return <div className="p-4">Version control panel coming soon...</div>;
       case 'code':
