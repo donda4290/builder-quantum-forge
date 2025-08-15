@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { EcommerceProvider } from '@/contexts/EcommerceContext';
 import { DomainProvider } from '@/contexts/DomainContext';
 import { IntegrationsProvider } from '@/contexts/IntegrationsContext';
+import { UserManagementProvider } from '@/contexts/UserManagementContext';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
