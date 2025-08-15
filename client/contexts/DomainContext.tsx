@@ -84,7 +84,7 @@ export interface HostingSettings {
   performanceOptimization: {
     minification: boolean;
     imageOptimization: boolean;
-    lazy Loading: boolean;
+    lazyLoading: boolean;
   };
   securityHeaders: {
     hsts: boolean;
