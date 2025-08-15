@@ -6,4 +6,379 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {\n  Code,\n  Save,\n  Eye,\n  RotateCcw,\n  Download,\n  Upload,\n  FileCode,\n  Palette,\n  Zap\n} from 'lucide-react';\nimport { Alert, AlertDescription } from '@/components/ui/alert';\n\nexport function CodeEditor() {\n  const { currentPage, updateElement, selectedElement } = useBuilder();\n  const [customHTML, setCustomHTML] = useState(currentPage?.customJS || '');\n  const [customCSS, setCustomCSS] = useState(currentPage?.customCSS || '');\n  const [customJS, setCustomJS] = useState(currentPage?.customJS || '');\n  const [elementHTML, setElementHTML] = useState(selectedElement?.content.html || '');\n  const [activeTab, setActiveTab] = useState('page-css');\n\n  const handleSavePageCode = () => {\n    // In a real implementation, this would update the page in the builder context\n    console.log('Saving page code:', { customHTML, customCSS, customJS });\n  };\n\n  const handleSaveElementCode = () => {\n    if (selectedElement) {\n      updateElement(selectedElement.id, {\n        content: { ...selectedElement.content, html: elementHTML }\n      });\n    }\n  };\n\n  const codeExamples = {\n    css: `/* Custom CSS Examples */\n\n/* Custom button hover effect */\n.custom-button:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);\n  transition: all 0.3s ease;\n}\n\n/* Gradient background */\n.hero-section {\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n}\n\n/* Custom animation */\n@keyframes fadeInUp {\n  from {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n.animate-fade-in {\n  animation: fadeInUp 0.6s ease-out;\n}`,\n    \n    javascript: `/* Custom JavaScript Examples */\n\n// Smooth scrolling for anchor links\ndocument.querySelectorAll('a[href^=\"#\"]').forEach(anchor => {\n  anchor.addEventListener('click', function (e) {\n    e.preventDefault();\n    const target = document.querySelector(this.getAttribute('href'));\n    if (target) {\n      target.scrollIntoView({\n        behavior: 'smooth',\n        block: 'start'\n      });\n    }\n  });\n});\n\n// Product quantity selector\nfunction updateQuantity(productId, change) {\n  const quantityEl = document.getElementById('quantity-' + productId);\n  let currentQuantity = parseInt(quantityEl.textContent);\n  const newQuantity = Math.max(1, currentQuantity + change);\n  quantityEl.textContent = newQuantity;\n  updateCartTotal();\n}\n\n// Shopping cart functionality\nfunction addToCart(productId, name, price) {\n  const cart = JSON.parse(localStorage.getItem('cart') || '[]');\n  const existingItem = cart.find(item => item.id === productId);\n  \n  if (existingItem) {\n    existingItem.quantity += 1;\n  } else {\n    cart.push({ id: productId, name, price, quantity: 1 });\n  }\n  \n  localStorage.setItem('cart', JSON.stringify(cart));\n  updateCartDisplay();\n}`,\n\n    html: `<!-- Custom HTML Examples -->\n\n<!-- Advanced product card with custom elements -->\n<div class=\"product-card-advanced\">\n  <div class=\"product-image-container\">\n    <img src=\"/api/placeholder/300/300\" alt=\"Product\" class=\"product-image\">\n    <div class=\"product-overlay\">\n      <button class=\"quick-view-btn\" onclick=\"openQuickView()\">\n        <i class=\"icon-eye\"></i> Quick View\n      </button>\n    </div>\n  </div>\n  <div class=\"product-info\">\n    <h3 class=\"product-title\">Premium Product</h3>\n    <div class=\"product-rating\">\n      <span class=\"stars\">★★★★★</span>\n      <span class=\"rating-count\">(24 reviews)</span>\n    </div>\n    <div class=\"product-price\">\n      <span class=\"current-price\">$299.99</span>\n      <span class=\"original-price\">$399.99</span>\n    </div>\n  </div>\n</div>\n\n<!-- Newsletter signup with validation -->\n<form class=\"newsletter-form\" onsubmit=\"subscribeNewsletter(event)\">\n  <div class=\"form-group\">\n    <input type=\"email\" placeholder=\"Enter your email\" required>\n    <button type=\"submit\" class=\"subscribe-btn\">\n      Subscribe\n    </button>\n  </div>\n  <p class=\"form-disclaimer\">\n    By subscribing, you agree to our privacy policy.\n  </p>\n</form>`\n  };\n\n  return (\n    <div className=\"h-full bg-background\">\n      <div className=\"p-4 border-b\">\n        <h3 className=\"font-semibold mb-2\">Custom Code Editor</h3>\n        <p className=\"text-sm text-muted-foreground\">\n          Add custom HTML, CSS, and JavaScript to enhance your website\n        </p>\n      </div>\n\n      <ScrollArea className=\"flex-1\">\n        <div className=\"p-4\">\n          <Tabs value={activeTab} onValueChange={setActiveTab}>\n            <TabsList className=\"grid w-full grid-cols-4\">\n              <TabsTrigger value=\"page-css\" className=\"text-xs\">\n                <Palette className=\"h-3 w-3 mr-1\" />\n                CSS\n              </TabsTrigger>\n              <TabsTrigger value=\"page-js\" className=\"text-xs\">\n                <Zap className=\"h-3 w-3 mr-1\" />\n                JS\n              </TabsTrigger>\n              <TabsTrigger value=\"element-html\" className=\"text-xs\">\n                <Code className=\"h-3 w-3 mr-1\" />\n                HTML\n              </TabsTrigger>\n              <TabsTrigger value=\"examples\" className=\"text-xs\">\n                <FileCode className=\"h-3 w-3 mr-1\" />\n                Examples\n              </TabsTrigger>\n            </TabsList>\n\n            <TabsContent value=\"page-css\" className=\"space-y-4\">\n              <Card>\n                <CardHeader>\n                  <CardTitle className=\"text-sm flex items-center\">\n                    <Palette className=\"h-4 w-4 mr-2\" />\n                    Custom CSS\n                  </CardTitle>\n                  <CardDescription>\n                    Add custom styles that will be applied to your entire page\n                  </CardDescription>\n                </CardHeader>\n                <CardContent className=\"space-y-4\">\n                  <div>\n                    <Label htmlFor=\"custom-css\">CSS Code</Label>\n                    <Textarea\n                      id=\"custom-css\"\n                      value={customCSS}\n                      onChange={(e) => setCustomCSS(e.target.value)}\n                      placeholder=\"/* Your custom CSS here */\"\n                      className=\"mt-1 font-mono text-sm\"\n                      rows={12}\n                    />\n                  </div>\n                  <div className=\"flex space-x-2\">\n                    <Button onClick={handleSavePageCode} size=\"sm\">\n                      <Save className=\"h-4 w-4 mr-2\" />\n                      Apply CSS\n                    </Button>\n                    <Button variant=\"outline\" size=\"sm\">\n                      <Eye className=\"h-4 w-4 mr-2\" />\n                      Preview\n                    </Button>\n                    <Button variant=\"outline\" size=\"sm\">\n                      <RotateCcw className=\"h-4 w-4 mr-2\" />\n                      Reset\n                    </Button>\n                  </div>\n                </CardContent>\n              </Card>\n            </TabsContent>\n\n            <TabsContent value=\"page-js\" className=\"space-y-4\">\n              <Card>\n                <CardHeader>\n                  <CardTitle className=\"text-sm flex items-center\">\n                    <Zap className=\"h-4 w-4 mr-2\" />\n                    Custom JavaScript\n                  </CardTitle>\n                  <CardDescription>\n                    Add interactive functionality with custom JavaScript\n                  </CardDescription>\n                </CardHeader>\n                <CardContent className=\"space-y-4\">\n                  <Alert>\n                    <AlertDescription>\n                      JavaScript will be executed when the page loads. Be careful with custom code.\n                    </AlertDescription>\n                  </Alert>\n                  <div>\n                    <Label htmlFor=\"custom-js\">JavaScript Code</Label>\n                    <Textarea\n                      id=\"custom-js\"\n                      value={customJS}\n                      onChange={(e) => setCustomJS(e.target.value)}\n                      placeholder=\"// Your custom JavaScript here\"\n                      className=\"mt-1 font-mono text-sm\"\n                      rows={12}\n                    />\n                  </div>\n                  <div className=\"flex space-x-2\">\n                    <Button onClick={handleSavePageCode} size=\"sm\">\n                      <Save className=\"h-4 w-4 mr-2\" />\n                      Apply JS\n                    </Button>\n                    <Button variant=\"outline\" size=\"sm\">\n                      <Eye className=\"h-4 w-4 mr-2\" />\n                      Test\n                    </Button>\n                    <Button variant=\"outline\" size=\"sm\">\n                      <RotateCcw className=\"h-4 w-4 mr-2\" />\n                      Reset\n                    </Button>\n                  </div>\n                </CardContent>\n              </Card>\n            </TabsContent>\n\n            <TabsContent value=\"element-html\" className=\"space-y-4\">\n              <Card>\n                <CardHeader>\n                  <CardTitle className=\"text-sm flex items-center\">\n                    <Code className=\"h-4 w-4 mr-2\" />\n                    Element HTML\n                  </CardTitle>\n                  <CardDescription>\n                    {selectedElement \n                      ? `Edit custom HTML for the selected ${selectedElement.type} element`\n                      : 'Select an element to edit its custom HTML'\n                    }\n                  </CardDescription>\n                </CardHeader>\n                <CardContent className=\"space-y-4\">\n                  {selectedElement ? (\n                    <>\n                      <div>\n                        <Label htmlFor=\"element-html\">Custom HTML</Label>\n                        <Textarea\n                          id=\"element-html\"\n                          value={elementHTML}\n                          onChange={(e) => setElementHTML(e.target.value)}\n                          placeholder=\"<div>Your custom HTML here</div>\"\n                          className=\"mt-1 font-mono text-sm\"\n                          rows={8}\n                        />\n                      </div>\n                      <div className=\"flex space-x-2\">\n                        <Button onClick={handleSaveElementCode} size=\"sm\">\n                          <Save className=\"h-4 w-4 mr-2\" />\n                          Update Element\n                        </Button>\n                        <Button variant=\"outline\" size=\"sm\">\n                          <RotateCcw className=\"h-4 w-4 mr-2\" />\n                          Reset\n                        </Button>\n                      </div>\n                    </>\n                  ) : (\n                    <div className=\"text-center py-8 text-muted-foreground\">\n                      <Code className=\"h-12 w-12 mx-auto mb-4 opacity-50\" />\n                      <p>Select an element on the canvas to edit its HTML</p>\n                    </div>\n                  )}\n                </CardContent>\n              </Card>\n            </TabsContent>\n\n            <TabsContent value=\"examples\" className=\"space-y-4\">\n              <div className=\"space-y-4\">\n                <Card>\n                  <CardHeader>\n                    <CardTitle className=\"text-sm\">CSS Examples</CardTitle>\n                    <CardDescription>Copy and customize these CSS snippets</CardDescription>\n                  </CardHeader>\n                  <CardContent>\n                    <Textarea\n                      value={codeExamples.css}\n                      readOnly\n                      className=\"font-mono text-xs\"\n                      rows={8}\n                    />\n                    <Button variant=\"outline\" size=\"sm\" className=\"mt-2\">\n                      <Copy className=\"h-4 w-4 mr-2\" />\n                      Copy CSS\n                    </Button>\n                  </CardContent>\n                </Card>\n\n                <Card>\n                  <CardHeader>\n                    <CardTitle className=\"text-sm\">JavaScript Examples</CardTitle>\n                    <CardDescription>Interactive functionality snippets</CardDescription>\n                  </CardHeader>\n                  <CardContent>\n                    <Textarea\n                      value={codeExamples.javascript}\n                      readOnly\n                      className=\"font-mono text-xs\"\n                      rows={8}\n                    />\n                    <Button variant=\"outline\" size=\"sm\" className=\"mt-2\">\n                      <Copy className=\"h-4 w-4 mr-2\" />\n                      Copy JS\n                    </Button>\n                  </CardContent>\n                </Card>\n\n                <Card>\n                  <CardHeader>\n                    <CardTitle className=\"text-sm\">HTML Examples</CardTitle>\n                    <CardDescription>Advanced HTML structures and components</CardDescription>\n                  </CardHeader>\n                  <CardContent>\n                    <Textarea\n                      value={codeExamples.html}\n                      readOnly\n                      className=\"font-mono text-xs\"\n                      rows={8}\n                    />\n                    <Button variant=\"outline\" size=\"sm\" className=\"mt-2\">\n                      <Copy className=\"h-4 w-4 mr-2\" />\n                      Copy HTML\n                    </Button>\n                  </CardContent>\n                </Card>\n              </div>\n            </TabsContent>\n          </Tabs>\n        </div>\n      </ScrollArea>\n    </div>\n  );\n}"}, {"old_str": "import {\n  Code,\n  Save,\n  Eye,\n  RotateCcw,\n  Download,\n  Upload,\n  FileCode,\n  Palette,\n  Zap\n} from 'lucide-react';\nimport { Alert, AlertDescription } from '@/components/ui/alert';", "new_str": "import {\n  Code,\n  Save,\n  Eye,\n  RotateCcw,\n  Download,\n  Upload,\n  FileCode,\n  Palette,\n  Zap,\n  Copy\n} from 'lucide-react';\nimport { Alert, AlertDescription } from '@/components/ui/alert';"}]
+import {
+  Code,
+  Save,
+  Eye,
+  RotateCcw,
+  FileCode,
+  Palette,
+  Zap,
+  Copy
+} from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+export function CodeEditor() {
+  const { currentPage, updateElement, selectedElement } = useBuilder();
+  const [customHTML, setCustomHTML] = useState(currentPage?.customJS || '');
+  const [customCSS, setCustomCSS] = useState(currentPage?.customCSS || '');
+  const [customJS, setCustomJS] = useState(currentPage?.customJS || '');
+  const [elementHTML, setElementHTML] = useState(selectedElement?.content.html || '');
+  const [activeTab, setActiveTab] = useState('page-css');
+
+  const handleSavePageCode = () => {
+    // In a real implementation, this would update the page in the builder context
+    console.log('Saving page code:', { customHTML, customCSS, customJS });
+  };
+
+  const handleSaveElementCode = () => {
+    if (selectedElement) {
+      updateElement(selectedElement.id, {
+        content: { ...selectedElement.content, html: elementHTML }
+      });
+    }
+  };
+
+  const codeExamples = {
+    css: `/* Custom CSS Examples */
+
+/* Custom button hover effect */
+.custom-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* Gradient background */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Custom animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}`,
+    
+    javascript: `/* Custom JavaScript Examples */
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+
+// Product quantity selector
+function updateQuantity(productId, change) {
+  const quantityEl = document.getElementById('quantity-' + productId);
+  let currentQuantity = parseInt(quantityEl.textContent);
+  const newQuantity = Math.max(1, currentQuantity + change);
+  quantityEl.textContent = newQuantity;
+  updateCartTotal();
+}
+
+// Shopping cart functionality
+function addToCart(productId, name, price) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const existingItem = cart.find(item => item.id === productId);
+  
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({ id: productId, name, price, quantity: 1 });
+  }
+  
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartDisplay();
+}`,
+
+    html: `<!-- Custom HTML Examples -->
+
+<!-- Advanced product card with custom elements -->
+<div class="product-card-advanced">
+  <div class="product-image-container">
+    <img src="/api/placeholder/300/300" alt="Product" class="product-image">
+    <div class="product-overlay">
+      <button class="quick-view-btn" onclick="openQuickView()">
+        <i class="icon-eye"></i> Quick View
+      </button>
+    </div>
+  </div>
+  <div class="product-info">
+    <h3 class="product-title">Premium Product</h3>
+    <div class="product-rating">
+      <span class="stars">★★★★★</span>
+      <span class="rating-count">(24 reviews)</span>
+    </div>
+    <div class="product-price">
+      <span class="current-price">$299.99</span>
+      <span class="original-price">$399.99</span>
+    </div>
+  </div>
+</div>
+
+<!-- Newsletter signup with validation -->
+<form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+  <div class="form-group">
+    <input type="email" placeholder="Enter your email" required>
+    <button type="submit" class="subscribe-btn">
+      Subscribe
+    </button>
+  </div>
+  <p class="form-disclaimer">
+    By subscribing, you agree to our privacy policy.
+  </p>
+</form>`
+  };
+
+  return (
+    <div className="h-full bg-background">
+      <div className="p-4 border-b">
+        <h3 className="font-semibold mb-2">Custom Code Editor</h3>
+        <p className="text-sm text-muted-foreground">
+          Add custom HTML, CSS, and JavaScript to enhance your website
+        </p>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="p-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="page-css" className="text-xs">
+                <Palette className="h-3 w-3 mr-1" />
+                CSS
+              </TabsTrigger>
+              <TabsTrigger value="page-js" className="text-xs">
+                <Zap className="h-3 w-3 mr-1" />
+                JS
+              </TabsTrigger>
+              <TabsTrigger value="element-html" className="text-xs">
+                <Code className="h-3 w-3 mr-1" />
+                HTML
+              </TabsTrigger>
+              <TabsTrigger value="examples" className="text-xs">
+                <FileCode className="h-3 w-3 mr-1" />
+                Examples
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="page-css" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm flex items-center">
+                    <Palette className="h-4 w-4 mr-2" />
+                    Custom CSS
+                  </CardTitle>
+                  <CardDescription>
+                    Add custom styles that will be applied to your entire page
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="custom-css">CSS Code</Label>
+                    <Textarea
+                      id="custom-css"
+                      value={customCSS}
+                      onChange={(e) => setCustomCSS(e.target.value)}
+                      placeholder="/* Your custom CSS here */"
+                      className="mt-1 font-mono text-sm"
+                      rows={12}
+                    />
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button onClick={handleSavePageCode} size="sm">
+                      <Save className="h-4 w-4 mr-2" />
+                      Apply CSS
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Eye className="h-4 w-4 mr-2" />
+                      Preview
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Reset
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="page-js" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm flex items-center">
+                    <Zap className="h-4 w-4 mr-2" />
+                    Custom JavaScript
+                  </CardTitle>
+                  <CardDescription>
+                    Add interactive functionality with custom JavaScript
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Alert>
+                    <AlertDescription>
+                      JavaScript will be executed when the page loads. Be careful with custom code.
+                    </AlertDescription>
+                  </Alert>
+                  <div>
+                    <Label htmlFor="custom-js">JavaScript Code</Label>
+                    <Textarea
+                      id="custom-js"
+                      value={customJS}
+                      onChange={(e) => setCustomJS(e.target.value)}
+                      placeholder="// Your custom JavaScript here"
+                      className="mt-1 font-mono text-sm"
+                      rows={12}
+                    />
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button onClick={handleSavePageCode} size="sm">
+                      <Save className="h-4 w-4 mr-2" />
+                      Apply JS
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Eye className="h-4 w-4 mr-2" />
+                      Test
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Reset
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="element-html" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm flex items-center">
+                    <Code className="h-4 w-4 mr-2" />
+                    Element HTML
+                  </CardTitle>
+                  <CardDescription>
+                    {selectedElement 
+                      ? `Edit custom HTML for the selected ${selectedElement.type} element`
+                      : 'Select an element to edit its custom HTML'
+                    }
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {selectedElement ? (
+                    <>
+                      <div>
+                        <Label htmlFor="element-html">Custom HTML</Label>
+                        <Textarea
+                          id="element-html"
+                          value={elementHTML}
+                          onChange={(e) => setElementHTML(e.target.value)}
+                          placeholder="<div>Your custom HTML here</div>"
+                          className="mt-1 font-mono text-sm"
+                          rows={8}
+                        />
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button onClick={handleSaveElementCode} size="sm">
+                          <Save className="h-4 w-4 mr-2" />
+                          Update Element
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <RotateCcw className="h-4 w-4 mr-2" />
+                          Reset
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Select an element on the canvas to edit its HTML</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="examples" className="space-y-4">
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">CSS Examples</CardTitle>
+                    <CardDescription>Copy and customize these CSS snippets</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea
+                      value={codeExamples.css}
+                      readOnly
+                      className="font-mono text-xs"
+                      rows={8}
+                    />
+                    <Button variant="outline" size="sm" className="mt-2">
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy CSS
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">JavaScript Examples</CardTitle>
+                    <CardDescription>Interactive functionality snippets</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea
+                      value={codeExamples.javascript}
+                      readOnly
+                      className="font-mono text-xs"
+                      rows={8}
+                    />
+                    <Button variant="outline" size="sm" className="mt-2">
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy JS
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">HTML Examples</CardTitle>
+                    <CardDescription>Advanced HTML structures and components</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea
+                      value={codeExamples.html}
+                      readOnly
+                      className="font-mono text-xs"
+                      rows={8}
+                    />
+                    <Button variant="outline" size="sm" className="mt-2">
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy HTML
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </ScrollArea>
+    </div>
+  );
+}
