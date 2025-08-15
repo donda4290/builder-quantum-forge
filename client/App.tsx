@@ -153,7 +153,9 @@ function App() {
       <AuthProvider>
         <EcommerceProvider>
           <DomainProvider>
-            <AppContent />
+            <IntegrationsProvider>
+              <AppContent />
+            </IntegrationsProvider>
           </DomainProvider>
         </EcommerceProvider>
       </AuthProvider>
