@@ -155,7 +155,9 @@ function App() {
         <EcommerceProvider>
           <DomainProvider>
             <IntegrationsProvider>
-              <AppContent />
+              <UserManagementProvider>
+                <AppContent />
+              </UserManagementProvider>
             </IntegrationsProvider>
           </DomainProvider>
         </EcommerceProvider>
