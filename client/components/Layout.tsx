@@ -27,6 +27,7 @@ import {
   Crown
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ChatSupport } from '@/components/support/ChatSupport';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
