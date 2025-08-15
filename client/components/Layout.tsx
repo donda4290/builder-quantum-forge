@@ -204,6 +204,9 @@ export function Layout({ children }: LayoutProps) {
           {children}
         </main>
       </div>
+
+      {/* Global Chat Support */}
+      <ChatSupport />
     </div>
   );
 }
