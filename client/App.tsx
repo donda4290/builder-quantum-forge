@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { EcommerceProvider } from '@/contexts/EcommerceContext';
+import { DomainProvider } from '@/contexts/DomainContext';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -150,7 +151,9 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <EcommerceProvider>
-          <AppContent />
+          <DomainProvider>
+            <AppContent />
+          </DomainProvider>
         </EcommerceProvider>
       </AuthProvider>
     </BrowserRouter>
