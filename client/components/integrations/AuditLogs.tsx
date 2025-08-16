@@ -324,7 +324,7 @@ export function AuditLogs() {
                       <SelectValue placeholder="All resources" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All resources</SelectItem>
+                      <SelectItem value="all">All resources</SelectItem>
                       {uniqueResources.map(resource => (
                         <SelectItem key={resource} value={resource}>{resource}</SelectItem>
                       ))}
@@ -338,7 +338,7 @@ export function AuditLogs() {
                       <SelectValue placeholder="All actions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All actions</SelectItem>
+                      <SelectItem value="all">All actions</SelectItem>
                       {uniqueActions.map(action => (
                         <SelectItem key={action} value={action}>{action}</SelectItem>
                       ))}
@@ -352,7 +352,7 @@ export function AuditLogs() {
                       <SelectValue placeholder="All users" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All users</SelectItem>
+                      <SelectItem value="all">All users</SelectItem>
                       {uniqueUsers.map(user => (
                         <SelectItem key={user.id} value={user.id}>{user.email}</SelectItem>
                       ))}
