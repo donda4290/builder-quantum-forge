@@ -230,35 +230,37 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
       </div>
 
       {/* Properties Panel */}
-      <div className="w-80 border-l bg-gray-50 dark:bg-gray-800 flex flex-col">
-        <div className="p-4 border-b bg-white dark:bg-gray-900">
-          <h3 className="font-semibold text-lg">Properties</h3>
-          <p className="text-sm text-muted-foreground">
-            {selectedElement ? 'Edit selected element' : 'Select an element to edit'}
-          </p>
-        </div>
+      {!chatbotCollapsed && (
+        <div className="w-80 border-l bg-gray-50 dark:bg-gray-800 flex flex-col">
+          <div className="p-4 border-b bg-white dark:bg-gray-900">
+            <h3 className="font-semibold text-lg">Properties</h3>
+            <p className="text-sm text-muted-foreground">
+              {selectedElement ? 'Edit selected element' : 'Select an element to edit'}
+            </p>
+          </div>
 
-        <div className="flex-1 p-4 space-y-4 overflow-auto">
-          {selectedElement ? (
-            <ElementProperties elementId={selectedElement} />
-          ) : (
-            <div className="text-center text-muted-foreground py-8">
-              <Settings className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>Select an element on the canvas to see its properties</p>
-            </div>
-          )}
+          <div className="flex-1 p-4 space-y-4 overflow-auto">
+            {selectedElement ? (
+              <ElementProperties elementId={selectedElement} />
+            ) : (
+              <div className="text-center text-muted-foreground py-8">
+                <Settings className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>Select an element on the canvas to see its properties</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* AI Chatbot */}
-      <BuilderChatbot
-        isOpen={isChatbotOpen}
-        onToggle={() => setIsChatbotOpen(!isChatbotOpen)}
-        onComponentAdd={handleComponentAdd}
-        onStyleChange={handleStyleChange}
-        onLayoutSuggestion={handleLayoutSuggestion}
-        currentPage={page}
-      />
+      {/* AI Chatbot Sidebar */}
+      {!chatbotCollapsed && (
+        <BuilderChatbotSidebar
+          onComponentAdd={handleComponentAdd}
+          onStyleChange={handleStyleChange}
+          onLayoutSuggestion={handleLayoutSuggestion}
+          currentPage={page}
+        />
+      )}
     </div>
   );
 }
