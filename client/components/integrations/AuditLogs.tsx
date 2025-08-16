@@ -176,15 +176,15 @@ export function AuditLogs() {
   const filteredLogs = React.useMemo(() => {
     let filtered = auditLogs;
 
-    if (filters.resource) {
+    if (filters.resource && filters.resource !== 'all') {
       filtered = filtered.filter(log => log.resource === filters.resource);
     }
 
-    if (filters.action) {
+    if (filters.action && filters.action !== 'all') {
       filtered = filtered.filter(log => log.action.includes(filters.action));
     }
 
-    if (filters.userId) {
+    if (filters.userId && filters.userId !== 'all') {
       filtered = filtered.filter(log => log.userId === filters.userId);
     }
 
