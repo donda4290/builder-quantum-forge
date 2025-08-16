@@ -194,6 +194,8 @@ export function BuilderIOIntegration() {
   const [isLoading, setIsLoading] = useState(false);
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [activeTab, setActiveTab] = useState('templates');
+  const [spaceContents, setSpaceContents] = useState<any[]>([]);
+  const [isConnectedToRealSpace, setIsConnectedToRealSpace] = useState(false);
   
   // Configuration form state
   const [formConfig, setFormConfig] = useState({
@@ -206,8 +208,14 @@ export function BuilderIOIntegration() {
   const handleConfigSave = async () => {
     setIsLoading(true);
     try {
-      // Simulate API validation
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Validate API credentials by making a test request
+      const testResponse = await fetch(`https://cdn.builder.io/api/v3/content?apiKey=${formConfig.publicApiKey}&limit=1`);
+
+      if (!testResponse.ok) {
+        throw new Error('Invalid API credentials');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       setConfig({
         ...formConfig,
@@ -223,6 +231,46 @@ export function BuilderIOIntegration() {
       testToast()({
         title: 'Configuration Failed',
         description: 'Please check your API credentials and try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSpaceContents = async () => {
+    if (!config.isConfigured || !config.apiKey || !config.spaceId) {
+      testToast()({
+        title: 'Configuration Required',
+        description: 'Please configure your Builder.io credentials first.',
+        variant: 'destructive'
+      });
+      setShowConfigDialog(true);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Fetch all content from Builder.io space
+      const response = await fetch(`https://cdn.builder.io/api/v3/content?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch space contents');
+      }
+
+      const data = await response.json();
+      setSpaceContents(data.results || []);
+      setIsConnectedToRealSpace(true);
+
+      testToast()({
+        title: 'Space Contents Loaded!',
+        description: `Found ${data.results?.length || 0} items in your Builder.io space.`
+      });
+    } catch (error) {
+      console.error('Error fetching space contents:', error);
+      testToast()({
+        title: 'Connection Failed',
+        description: 'Could not connect to your Builder.io space. Please check your credentials.',
         variant: 'destructive'
       });
     } finally {
@@ -345,14 +393,8 @@ export function BuilderIOIntegration() {
                 size="sm"
                 onClick={() => {
                   setIsLoading(true);
-                  // Simulate syncing templates from Builder.io space
-                  setTimeout(() => {
-                    setIsLoading(false);
-                    testToast()({
-                      title: 'Templates Synced!',
-                      description: 'Latest templates imported from your Builder.io space.'
-                    });
-                  }, 2000);
+                  // Fetch real templates from Builder.io space
+                  fetchSpaceContents();
                 }}
                 disabled={isLoading}
               >
@@ -361,7 +403,7 @@ export function BuilderIOIntegration() {
                 ) : (
                   <Download className="h-4 w-4 mr-2" />
                 )}
-                Sync Templates
+                Load My Space
               </Button>
             </>
           )}
@@ -409,37 +451,31 @@ export function BuilderIOIntegration() {
 
             <div className="flex-1 overflow-auto">
               <TabsContent value="templates" className="m-0 p-4">
-                <BuilderTemplateManager
-                  templates={templates}
-                  onImportTemplate={(templateId) => {
-                    setIsLoading(true);
-                    // Simulate template import
-                    setTimeout(() => {
-                      setTemplates(prev => prev.map(t =>
-                        t.id === templateId ? { ...t, isImported: true } : t
-                      ));
-                      setIsLoading(false);
-                      testToast()({
-                        title: 'Template Imported!',
-                        description: 'Template is now available in your page manager.'
-                      });
-                    }, 1500);
-                  }}
-                  onCreateFromTemplate={(template) => {
+                <BuilderSpaceExplorer
+                  config={config}
+                  spaceContents={spaceContents}
+                  mockTemplates={templates}
+                  isConnectedToRealSpace={isConnectedToRealSpace}
+                  onFetchContents={fetchSpaceContents}
+                  onSelectContent={(content) => {
                     const newPage: BuilderPage = {
-                      id: `page-from-${template.id}-${Date.now()}`,
-                      name: `${template.name} Copy`,
-                      url: `/${template.name.toLowerCase().replace(/\s+/g, '-')}`,
-                      published: false,
-                      lastModified: new Date(),
-                      model: template.model
+                      id: content.id,
+                      name: content.name || content.data?.title || 'Imported Content',
+                      url: content.data?.url || `/${content.name?.toLowerCase().replace(/\s+/g, '-')}` || '/imported',
+                      published: !!content.published,
+                      lastModified: new Date(content.lastUpdated || Date.now()),
+                      model: content.modelName || 'page'
                     };
-                    setPages(prev => [...prev, newPage]);
+                    setPages(prev => {
+                      const exists = prev.find(p => p.id === content.id);
+                      if (exists) return prev;
+                      return [...prev, newPage];
+                    });
                     setSelectedPage(newPage);
                     setActiveTab('editor');
                     testToast()({
-                      title: 'Page Created from Template!',
-                      description: `Created ${newPage.name} based on ${template.name}.`
+                      title: 'Content Selected!',
+                      description: `${newPage.name} is now ready for editing.`
                     });
                   }}
                   isLoading={isLoading}
@@ -502,15 +538,24 @@ function BuilderConfigForm({ config, onChange, onSave, isLoading }: BuilderConfi
           <li>3. Copy your Public API Key and Private API Key</li>
           <li>4. Note your Space ID from the URL</li>
         </ol>
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-3"
-          onClick={() => window.open('https://builder.io/account/space', '_blank')}
-        >
-          <ExternalLink className="h-3 w-3 mr-1" />
-          Open Builder.io Dashboard
-        </Button>
+        <div className="flex gap-2 mt-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open('https://builder.io/account/space', '_blank')}
+          >
+            <ExternalLink className="h-3 w-3 mr-1" />
+            Open Dashboard
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open('https://www.builder.io/c/docs/developers', '_blank')}
+          >
+            <FileText className="h-3 w-3 mr-1" />
+            API Guide
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-3">
