@@ -24,6 +24,7 @@ import {
   Check
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { AdvancedWebsiteBuilder } from './AdvancedWebsiteBuilder';
 
 interface ChatMessage {
   id: string;
