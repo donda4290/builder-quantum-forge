@@ -212,7 +212,7 @@ export function BuilderIOIntegration() {
       let credentialsValid = false;
 
       try {
-        const testResponse = await fetch(`https://cdn.builder.io/api/v3/content?apiKey=${formConfig.publicApiKey}&limit=1`, {
+        const testResponse = await fetch(`https://cdn.builder.io/api/v1/query/${formConfig.spaceId}/page?apiKey=${formConfig.publicApiKey}&limit=1`, {
           method: 'GET',
           mode: 'cors'
         });
