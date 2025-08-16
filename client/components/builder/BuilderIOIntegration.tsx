@@ -30,6 +30,7 @@ import {
   Share2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ActiveBuilderEditor } from './ActiveVisualEditor';
 
 interface BuilderIOConfig {
   apiKey: string;
