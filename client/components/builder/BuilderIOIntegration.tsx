@@ -196,6 +196,16 @@ export function BuilderIOIntegration() {
   const [activeTab, setActiveTab] = useState('templates');
   const [spaceContents, setSpaceContents] = useState<any[]>([]);
   const [isConnectedToRealSpace, setIsConnectedToRealSpace] = useState(false);
+
+  // Debug function to check current configuration
+  const debugConfig = () => {
+    console.log('Current config:', config);
+    console.log('Form config:', formConfig);
+    testToast()({
+      title: 'Configuration Debug',
+      description: `Space: ${config.spaceId}, API Key: ${config.publicApiKey ? 'Set' : 'Missing'}`,
+    });
+  };
   
   // Configuration form state
   const [formConfig, setFormConfig] = useState({
