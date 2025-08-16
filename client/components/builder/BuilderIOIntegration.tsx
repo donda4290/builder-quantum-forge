@@ -531,10 +531,14 @@ function BuilderVisualEditor({
                 <ActiveBuilderEditor
                   page={selectedPage}
                   onSave={(content) => {
-                    toast({
-                      title: 'Page Saved!',
-                      description: `Changes to ${selectedPage.name} have been saved successfully.`
-                    });
+                    try {
+                      toast({
+                        title: 'Page Saved!',
+                        description: `Changes to ${selectedPage.name} have been saved successfully.`
+                      });
+                    } catch (error) {
+                      console.error('Toast error:', error);
+                    }
                   }}
                 />
               </div>
