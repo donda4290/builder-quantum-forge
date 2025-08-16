@@ -36,6 +36,7 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
   const [isDragging, setIsDragging] = useState(false);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const components = [
     { id: 'text', name: 'Text Block', icon: '📝', color: 'bg-blue-100 text-blue-800' },
