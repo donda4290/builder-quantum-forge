@@ -198,11 +198,15 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 bg-gray-100 dark:bg-gray-800 p-6 overflow-auto">
+        <div className="flex-1 bg-gray-100 dark:bg-gray-800 p-4 overflow-auto">
           <div className="flex justify-center">
             <div
               className={`bg-white dark:bg-gray-900 shadow-lg transition-all duration-300 min-h-full relative ${isDragging ? 'ring-2 ring-primary ring-opacity-50' : ''}`}
-              style={{ width: getCanvasWidth(), maxWidth: '100%', minHeight: '800px' }}
+              style={{
+                width: getCanvasWidth(),
+                maxWidth: chatbotCollapsed ? '100%' : 'calc(100% - 2rem)',
+                minHeight: '800px'
+              }}
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
             >
