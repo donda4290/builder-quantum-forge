@@ -133,11 +133,11 @@ export function ActivityMonitoring() {
   const filteredLogs = React.useMemo(() => {
     let filtered = activityLogs;
 
-    if (selectedUser) {
+    if (selectedUser && selectedUser !== 'all') {
       filtered = filtered.filter(log => log.userId === selectedUser);
     }
 
-    if (selectedAction) {
+    if (selectedAction && selectedAction !== 'all') {
       filtered = filtered.filter(log => log.action.includes(selectedAction));
     }
 
