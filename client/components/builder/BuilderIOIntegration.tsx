@@ -126,7 +126,7 @@ export function BuilderIOIntegration() {
       });
       
       setShowConfigDialog(false);
-      toast({
+      testToast()({
         title: 'Builder.io Configured!',
         description: 'Your Builder.io integration is now active and ready to use.'
       });
