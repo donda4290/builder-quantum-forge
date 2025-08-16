@@ -37,6 +37,7 @@ export function DomainDashboard() {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Globe },
     { id: 'purchase', label: 'Purchase', icon: Plus },
+    { id: 'stores', label: 'Store Deployment', icon: Zap },
     { id: 'domains', label: 'Domains', icon: Database },
     { id: 'dns', label: 'DNS', icon: Wifi },
     { id: 'ssl', label: 'SSL', icon: Shield },
