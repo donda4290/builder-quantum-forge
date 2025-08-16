@@ -1211,18 +1211,22 @@ function BuilderSpaceExplorer({
                 ? 'You\'re viewing real content from your Builder.io space. Select any item to import and edit it in this platform.'
                 : 'This is demo content. Connect to your Builder.io space to see your actual templates and content.'}
             </p>
-            {isConnectedToRealSpace && (
-              <div className="flex items-center space-x-4 mt-3">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Database className="w-4 h-4 mr-1 text-blue-600" />
-                  Space: {config.spaceId}
-                </div>
+            <div className="flex items-center space-x-4 mt-3">
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Database className="w-4 h-4 mr-1 text-blue-600" />
+                Space: {config.spaceId}
+              </div>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Key className="w-4 h-4 mr-1 text-yellow-600" />
+                API: {config.publicApiKey ? `${config.publicApiKey.slice(0, 8)}...` : 'Not set'}
+              </div>
+              {isConnectedToRealSpace && (
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Package className="w-4 h-4 mr-1 text-green-600" />
                   {spaceContents.length} Items
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
