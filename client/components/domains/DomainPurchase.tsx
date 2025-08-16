@@ -29,6 +29,7 @@ import {
   Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export function DomainPurchase() {
   const { searchDomains, purchaseDomain, domainProviders } = useDomain();
