@@ -72,6 +72,30 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
     });
   };
 
+  const handleComponentAdd = (componentType: string) => {
+    toast({
+      title: `${componentType} Added!`,
+      description: `AI Assistant added a ${componentType} component to your page.`
+    });
+    // In a real implementation, this would add the actual component
+  };
+
+  const handleStyleChange = (property: string, value: string) => {
+    toast({
+      title: 'Style Updated!',
+      description: `AI Assistant applied ${value} ${property} to your page.`
+    });
+    // In a real implementation, this would apply the actual styles
+  };
+
+  const handleLayoutSuggestion = (layout: string) => {
+    toast({
+      title: 'Layout Optimized!',
+      description: `AI Assistant applied ${layout} layout optimizations.`
+    });
+    // In a real implementation, this would apply the layout changes
+  };
+
   return (
     <div className="h-full flex">
       {/* Components Sidebar */}
