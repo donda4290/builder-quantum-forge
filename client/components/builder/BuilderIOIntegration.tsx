@@ -159,7 +159,7 @@ export function BuilderIOIntegration() {
       setPages(prev => [...prev, newPage]);
       setSelectedPage(newPage);
       
-      toast({
+      testToast()({
         title: 'Page Created!',
         description: 'Your new page is ready for editing in Builder.io.'
       });
