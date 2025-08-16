@@ -139,7 +139,32 @@ export function BuilderChatbot({
 
   const generateBotResponse = (userInput: string): ChatMessage => {
     const input = userInput.toLowerCase();
-    
+
+    // Check for full website building requests
+    if (input.includes('fully function') || input.includes('complete website') || input.includes('build website') || input.includes('high quality')) {
+      setShowAdvancedBuilder(true);
+      return {
+        id: `bot-${Date.now()}`,
+        type: 'bot',
+        content: "🎉 Perfect! I'll build you a complete, fully functional website with professional quality. Choose from these premium templates below:",
+        timestamp: new Date(),
+        actions: [
+          {
+            id: 'show-templates',
+            label: '🏆 View Premium Templates',
+            type: 'component',
+            icon: <Building2 className="h-4 w-4" />,
+            action: () => {
+              toast({
+                title: '🎯 Premium Templates Ready!',
+                description: 'Each template includes full functionality and professional design.'
+              });
+            }
+          }
+        ]
+      };
+    }
+
     // Smart response generation based on user input
     if (input.includes('landing page') || input.includes('homepage')) {
       return {
