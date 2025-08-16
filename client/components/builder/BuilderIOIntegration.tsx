@@ -1115,14 +1115,29 @@ function BuilderSpaceExplorer({
 
         <div className="flex items-center space-x-4">
           {!isConnectedToRealSpace && (
-            <Button onClick={onFetchContents} disabled={isLoading}>
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4 mr-2" />
-              )}
-              Load My Space
-            </Button>
+            <>
+              <Button onClick={onFetchContents} disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                Load My Space
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log('Config debug:', config);
+                  testToast()({
+                    title: 'Current Config',
+                    description: `Space: ${config.spaceId}, Key: ${config.publicApiKey ? config.publicApiKey.slice(0, 12) + '...' : 'Missing'}`
+                  });
+                }}
+              >
+                Debug Config
+              </Button>
+            </>
           )}
 
           <Input
