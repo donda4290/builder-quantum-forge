@@ -1,18 +1,31 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  Building2, 
-  Palette, 
-  Code, 
-  Eye, 
-  Monitor, 
-  Tablet, 
+import React, { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Building2,
+  Palette,
+  Code,
+  Eye,
+  Monitor,
+  Tablet,
   Smartphone,
   Save,
   Plus,
@@ -33,10 +46,10 @@ import {
   Import,
   Copy,
   FileText,
-  Layout
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { ActiveBuilderEditor } from './ActiveVisualEditor';
+  Layout,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { ActiveBuilderEditor } from "./ActiveVisualEditor";
 
 interface BuilderIOConfig {
   apiKey: string;
@@ -69,109 +82,110 @@ interface BuilderTemplate {
 
 // Mock Builder.io configuration for demonstration
 const mockBuilderConfig: BuilderIOConfig = {
-  apiKey: 'demo-api-key-12345',
-  publicApiKey: 'demo-public-key-67890',
-  spaceId: 'demo-space-id',
-  model: 'page',
-  isConfigured: true
+  apiKey: "demo-api-key-12345",
+  publicApiKey: "demo-public-key-67890",
+  spaceId: "demo-space-id",
+  model: "page",
+  isConfigured: true,
 };
 
 // Mock Builder.io pages
 const mockBuilderPages: BuilderPage[] = [
   {
-    id: 'home-page',
-    name: 'Home Page',
-    url: '/',
+    id: "home-page",
+    name: "Home Page",
+    url: "/",
     published: true,
-    lastModified: new Date('2024-01-15'),
-    model: 'page'
+    lastModified: new Date("2024-01-15"),
+    model: "page",
   },
   {
-    id: 'products-page',
-    name: 'Products Page',
-    url: '/products',
+    id: "products-page",
+    name: "Products Page",
+    url: "/products",
     published: false,
-    lastModified: new Date('2024-01-12'),
-    model: 'page'
+    lastModified: new Date("2024-01-12"),
+    model: "page",
   },
   {
-    id: 'about-page',
-    name: 'About Page',
-    url: '/about',
+    id: "about-page",
+    name: "About Page",
+    url: "/about",
     published: true,
-    lastModified: new Date('2024-01-10'),
-    model: 'page'
-  }
+    lastModified: new Date("2024-01-10"),
+    model: "page",
+  },
 ];
 
 // Mock Builder.io templates from your space
 const mockBuilderTemplates: BuilderTemplate[] = [
   {
-    id: 'ecommerce-hero-template',
-    name: 'E-commerce Hero Section',
-    description: 'Modern hero section with product showcase and call-to-action',
-    category: 'E-commerce',
-    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
-    model: 'page',
+    id: "ecommerce-hero-template",
+    name: "E-commerce Hero Section",
+    description: "Modern hero section with product showcase and call-to-action",
+    category: "E-commerce",
+    previewUrl: "https://cdn.builder.io/api/v1/image/assets%2F...",
+    model: "page",
     isImported: false,
-    lastModified: new Date('2024-01-20'),
-    tags: ['hero', 'ecommerce', 'cta']
+    lastModified: new Date("2024-01-20"),
+    tags: ["hero", "ecommerce", "cta"],
   },
   {
-    id: 'landing-page-template',
-    name: 'SaaS Landing Page',
-    description: 'Complete landing page template with pricing and features',
-    category: 'Landing Pages',
-    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
-    model: 'landing-page',
+    id: "landing-page-template",
+    name: "SaaS Landing Page",
+    description: "Complete landing page template with pricing and features",
+    category: "Landing Pages",
+    previewUrl: "https://cdn.builder.io/api/v1/image/assets%2F...",
+    model: "landing-page",
     isImported: true,
-    lastModified: new Date('2024-01-18'),
-    tags: ['saas', 'landing', 'pricing']
+    lastModified: new Date("2024-01-18"),
+    tags: ["saas", "landing", "pricing"],
   },
   {
-    id: 'blog-layout-template',
-    name: 'Modern Blog Layout',
-    description: 'Clean blog post layout with sidebar and related articles',
-    category: 'Blog',
-    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
-    model: 'blog-post',
+    id: "blog-layout-template",
+    name: "Modern Blog Layout",
+    description: "Clean blog post layout with sidebar and related articles",
+    category: "Blog",
+    previewUrl: "https://cdn.builder.io/api/v1/image/assets%2F...",
+    model: "blog-post",
     isImported: false,
-    lastModified: new Date('2024-01-16'),
-    tags: ['blog', 'article', 'content']
+    lastModified: new Date("2024-01-16"),
+    tags: ["blog", "article", "content"],
   },
   {
-    id: 'product-showcase-template',
-    name: 'Product Showcase',
-    description: 'Product gallery with zoom functionality and purchase options',
-    category: 'E-commerce',
-    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
-    model: 'product',
+    id: "product-showcase-template",
+    name: "Product Showcase",
+    description: "Product gallery with zoom functionality and purchase options",
+    category: "E-commerce",
+    previewUrl: "https://cdn.builder.io/api/v1/image/assets%2F...",
+    model: "product",
     isImported: true,
-    lastModified: new Date('2024-01-14'),
-    tags: ['product', 'gallery', 'showcase']
+    lastModified: new Date("2024-01-14"),
+    tags: ["product", "gallery", "showcase"],
   },
   {
-    id: 'contact-form-template',
-    name: 'Contact & Support Form',
-    description: 'Multi-step contact form with file upload and department routing',
-    category: 'Forms',
-    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
-    model: 'page',
+    id: "contact-form-template",
+    name: "Contact & Support Form",
+    description:
+      "Multi-step contact form with file upload and department routing",
+    category: "Forms",
+    previewUrl: "https://cdn.builder.io/api/v1/image/assets%2F...",
+    model: "page",
     isImported: false,
-    lastModified: new Date('2024-01-12'),
-    tags: ['contact', 'form', 'support']
+    lastModified: new Date("2024-01-12"),
+    tags: ["contact", "form", "support"],
   },
   {
-    id: 'pricing-table-template',
-    name: 'Pricing Tables',
-    description: 'Responsive pricing tables with feature comparison',
-    category: 'Pricing',
-    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
-    model: 'page',
+    id: "pricing-table-template",
+    name: "Pricing Tables",
+    description: "Responsive pricing tables with feature comparison",
+    category: "Pricing",
+    previewUrl: "https://cdn.builder.io/api/v1/image/assets%2F...",
+    model: "page",
     isImported: false,
-    lastModified: new Date('2024-01-10'),
-    tags: ['pricing', 'comparison', 'features']
-  }
+    lastModified: new Date("2024-01-10"),
+    tags: ["pricing", "comparison", "features"],
+  },
 ];
 
 export function BuilderIOIntegration() {
@@ -179,40 +193,41 @@ export function BuilderIOIntegration() {
 
   // Test toast function availability
   const testToast = React.useCallback(() => {
-    if (typeof toast === 'function') {
+    if (typeof toast === "function") {
       return toast;
     } else {
-      console.error('Toast function not available');
+      console.error("Toast function not available");
       return () => {};
     }
   }, [toast]);
 
   const [config, setConfig] = useState<BuilderIOConfig>(mockBuilderConfig);
   const [pages, setPages] = useState<BuilderPage[]>(mockBuilderPages);
-  const [templates, setTemplates] = useState<BuilderTemplate[]>(mockBuilderTemplates);
+  const [templates, setTemplates] =
+    useState<BuilderTemplate[]>(mockBuilderTemplates);
   const [selectedPage, setSelectedPage] = useState<BuilderPage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfigDialog, setShowConfigDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState('templates');
+  const [activeTab, setActiveTab] = useState("templates");
   const [spaceContents, setSpaceContents] = useState<any[]>([]);
   const [isConnectedToRealSpace, setIsConnectedToRealSpace] = useState(false);
 
   // Debug function to check current configuration
   const debugConfig = () => {
-    console.log('Current config:', config);
-    console.log('Form config:', formConfig);
+    console.log("Current config:", config);
+    console.log("Form config:", formConfig);
     testToast()({
-      title: 'Configuration Debug',
-      description: `Space: ${config.spaceId}, API Key: ${config.publicApiKey ? 'Set' : 'Missing'}`,
+      title: "Configuration Debug",
+      description: `Space: ${config.spaceId}, API Key: ${config.publicApiKey ? "Set" : "Missing"}`,
     });
   };
-  
+
   // Configuration form state
   const [formConfig, setFormConfig] = useState({
     apiKey: config.apiKey,
     publicApiKey: config.publicApiKey,
     spaceId: config.spaceId,
-    model: config.model
+    model: config.model,
   });
 
   const handleConfigSave = async () => {
@@ -222,44 +237,48 @@ export function BuilderIOIntegration() {
       let credentialsValid = false;
 
       try {
-        const testResponse = await fetch(`https://cdn.builder.io/api/v1/query/${formConfig.spaceId}/page?apiKey=${formConfig.publicApiKey}&limit=1`, {
-          method: 'GET',
-          mode: 'cors'
-        });
+        const testResponse = await fetch(
+          `https://cdn.builder.io/api/v1/query/${formConfig.spaceId}/page?apiKey=${formConfig.publicApiKey}&limit=1`,
+          {
+            method: "GET",
+            mode: "cors",
+          },
+        );
 
         if (testResponse.ok) {
           credentialsValid = true;
         } else if (testResponse.status === 401 || testResponse.status === 403) {
-          throw new Error('Invalid API credentials');
+          throw new Error("Invalid API credentials");
         }
       } catch (corsError) {
         // If CORS blocks the request, we'll assume credentials are valid
         // and let the actual usage determine if they work
-        console.warn('CORS prevented credential validation, assuming valid');
+        console.warn("CORS prevented credential validation, assuming valid");
         credentialsValid = true;
       }
 
       if (!credentialsValid) {
-        throw new Error('Could not validate credentials');
+        throw new Error("Could not validate credentials");
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setConfig({
         ...formConfig,
-        isConfigured: true
+        isConfigured: true,
       });
-      
+
       setShowConfigDialog(false);
       testToast()({
-        title: 'Builder.io Configured!',
-        description: 'Your Builder.io integration is now active and ready to use.'
+        title: "Builder.io Configured!",
+        description:
+          "Your Builder.io integration is now active and ready to use.",
       });
     } catch (error) {
       testToast()({
-        title: 'Configuration Failed',
-        description: 'Please check your API credentials and try again.',
-        variant: 'destructive'
+        title: "Configuration Failed",
+        description: "Please check your API credentials and try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -269,9 +288,9 @@ export function BuilderIOIntegration() {
   const fetchSpaceContents = async () => {
     if (!config.isConfigured || !config.publicApiKey || !config.spaceId) {
       testToast()({
-        title: 'Configuration Required',
-        description: 'Please configure your Builder.io credentials first.',
-        variant: 'destructive'
+        title: "Configuration Required",
+        description: "Please configure your Builder.io credentials first.",
+        variant: "destructive",
       });
       setShowConfigDialog(true);
       setIsLoading(false);
@@ -281,17 +300,20 @@ export function BuilderIOIntegration() {
     try {
       // Try multiple API endpoints and methods to fetch Builder.io content
       let data = null;
-      let errorDetails = '';
+      let errorDetails = "";
 
       // Method 1: Try the correct v1 content API (v3 doesn't exist)
       try {
-        const response = await fetch(`https://cdn.builder.io/api/v1/query/${config.spaceId}/page?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `https://cdn.builder.io/api/v1/query/${config.spaceId}/page?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            mode: "cors",
           },
-          mode: 'cors'
-        });
+        );
 
         if (response.ok) {
           const responseData = await response.json();
@@ -300,20 +322,27 @@ export function BuilderIOIntegration() {
           errorDetails = `API returned ${response.status}: ${response.statusText}`;
         }
       } catch (corsError) {
-        console.warn('CORS error with v1 API:', corsError);
-        errorDetails = 'CORS blocked - trying alternative method';
+        console.warn("CORS error with v1 API:", corsError);
+        errorDetails = "CORS blocked - trying alternative method";
       }
 
       // Method 2: Try different model types if page model failed
-      if (!data && !errorDetails.includes('401') && !errorDetails.includes('403')) {
+      if (
+        !data &&
+        !errorDetails.includes("401") &&
+        !errorDetails.includes("403")
+      ) {
         try {
-          const allContentResponse = await fetch(`https://cdn.builder.io/api/v1/query/${config.spaceId}?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
+          const allContentResponse = await fetch(
+            `https://cdn.builder.io/api/v1/query/${config.spaceId}?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              mode: "cors",
             },
-            mode: 'cors'
-          });
+          );
 
           if (allContentResponse.ok) {
             const allContentData = await allContentResponse.json();
@@ -322,66 +351,66 @@ export function BuilderIOIntegration() {
             errorDetails += ` | All content API: ${allContentResponse.status}`;
           }
         } catch (allContentError) {
-          console.warn('All content API also failed:', allContentError);
-          errorDetails += ' | All content API also blocked';
+          console.warn("All content API also failed:", allContentError);
+          errorDetails += " | All content API also blocked";
         }
       }
 
       // Method 3: If both APIs fail, provide simulated content based on space ID
       if (!data) {
-        console.warn('Direct API access blocked, using simulated content');
+        console.warn("Direct API access blocked, using simulated content");
 
         // Create simulated content that looks like real Builder.io content
         const simulatedContent = [
           {
             id: `${config.spaceId}-home`,
-            name: 'Home Page',
-            modelName: 'page',
+            name: "Home Page",
+            modelName: "page",
             published: true,
             lastUpdated: new Date().toISOString(),
             data: {
-              title: 'Home Page',
-              description: 'Main landing page',
-              url: '/'
-            }
+              title: "Home Page",
+              description: "Main landing page",
+              url: "/",
+            },
           },
           {
             id: `${config.spaceId}-about`,
-            name: 'About Us',
-            modelName: 'page',
+            name: "About Us",
+            modelName: "page",
             published: true,
             lastUpdated: new Date(Date.now() - 86400000).toISOString(),
             data: {
-              title: 'About Us',
-              description: 'Company information page',
-              url: '/about'
-            }
+              title: "About Us",
+              description: "Company information page",
+              url: "/about",
+            },
           },
           {
             id: `${config.spaceId}-contact`,
-            name: 'Contact',
-            modelName: 'page',
+            name: "Contact",
+            modelName: "page",
             published: false,
             lastUpdated: new Date(Date.now() - 172800000).toISOString(),
             data: {
-              title: 'Contact Us',
-              description: 'Contact form and information',
-              url: '/contact'
-            }
-          }
+              title: "Contact Us",
+              description: "Contact form and information",
+              url: "/contact",
+            },
+          },
         ];
 
         data = { results: simulatedContent };
 
         testToast()({
-          title: 'Simulated Content Loaded',
+          title: "Simulated Content Loaded",
           description: `API access restricted. Showing simulated content for space: ${config.spaceId}`,
-          variant: 'default'
+          variant: "default",
         });
       } else {
         testToast()({
-          title: 'Space Contents Loaded!',
-          description: `Found ${data.results?.length || 0} items in your Builder.io space.`
+          title: "Space Contents Loaded!",
+          description: `Found ${data.results?.length || 0} items in your Builder.io space.`,
         });
       }
 
@@ -389,26 +418,29 @@ export function BuilderIOIntegration() {
       const results = Array.isArray(data?.results) ? data.results : [];
       setSpaceContents(results);
       setIsConnectedToRealSpace(true);
-
     } catch (error) {
-      console.error('Error fetching space contents:', error);
+      console.error("Error fetching space contents:", error);
 
       // Provide helpful error message based on the type of error
-      let errorMessage = 'Could not connect to your Builder.io space.';
-      let errorDescription = 'Please check your credentials and try again.';
+      let errorMessage = "Could not connect to your Builder.io space.";
+      let errorDescription = "Please check your credentials and try again.";
 
-      if (error.message.includes('CORS') || error.message.includes('fetch')) {
-        errorMessage = 'Browser Security Restriction';
-        errorDescription = 'Direct API access blocked. Using Builder.io SDK integration is recommended for production.';
-      } else if (error.message.includes('401') || error.message.includes('403')) {
-        errorMessage = 'Authentication Failed';
-        errorDescription = 'Please check your API key and space ID.';
+      if (error.message.includes("CORS") || error.message.includes("fetch")) {
+        errorMessage = "Browser Security Restriction";
+        errorDescription =
+          "Direct API access blocked. Using Builder.io SDK integration is recommended for production.";
+      } else if (
+        error.message.includes("401") ||
+        error.message.includes("403")
+      ) {
+        errorMessage = "Authentication Failed";
+        errorDescription = "Please check your API key and space ID.";
       }
 
       testToast()({
         title: errorMessage,
         description: errorDescription,
-        variant: 'destructive'
+        variant: "destructive",
       });
 
       // Still set some demo content so the user can see how it works
@@ -423,29 +455,29 @@ export function BuilderIOIntegration() {
     setIsLoading(true);
     try {
       // Simulate page creation
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       const newPage: BuilderPage = {
         id: `page-${Date.now()}`,
-        name: 'New Page',
-        url: '/new-page',
+        name: "New Page",
+        url: "/new-page",
         published: false,
         lastModified: new Date(),
-        model: 'page'
+        model: "page",
       };
-      
-      setPages(prev => [...prev, newPage]);
+
+      setPages((prev) => [...prev, newPage]);
       setSelectedPage(newPage);
-      
+
       testToast()({
-        title: 'Page Created!',
-        description: 'Your new page is ready for editing in Builder.io.'
+        title: "Page Created!",
+        description: "Your new page is ready for editing in Builder.io.",
       });
     } catch (error) {
       testToast()({
-        title: 'Creation Failed',
-        description: 'Could not create new page. Please try again.',
-        variant: 'destructive'
+        title: "Creation Failed",
+        description: "Could not create new page. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -455,12 +487,12 @@ export function BuilderIOIntegration() {
   const openBuilderEditor = (page: BuilderPage) => {
     // Launch the integrated visual editor
     setSelectedPage(page);
-    setActiveTab('editor');
+    setActiveTab("editor");
 
     // For demonstration, we'll simulate the full Builder.io editor experience
     testToast()({
-      title: 'Builder.io Editor Activated!',
-      description: `Now editing ${page.name} with full visual editor capabilities.`
+      title: "Builder.io Editor Activated!",
+      description: `Now editing ${page.name} with full visual editor capabilities.`,
     });
 
     // In production, this would initialize the actual Builder.io SDK:
@@ -470,23 +502,25 @@ export function BuilderIOIntegration() {
   const publishPage = async (pageId: string) => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setPages(prev => prev.map(page => 
-        page.id === pageId 
-          ? { ...page, published: true, lastModified: new Date() }
-          : page
-      ));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setPages((prev) =>
+        prev.map((page) =>
+          page.id === pageId
+            ? { ...page, published: true, lastModified: new Date() }
+            : page,
+        ),
+      );
+
       testToast()({
-        title: 'Page Published!',
-        description: 'Your page is now live and accessible to visitors.'
+        title: "Page Published!",
+        description: "Your page is now live and accessible to visitors.",
       });
     } catch (error) {
       testToast()({
-        title: 'Publish Failed',
-        description: 'Could not publish page. Please try again.',
-        variant: 'destructive'
+        title: "Publish Failed",
+        description: "Could not publish page. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -496,7 +530,7 @@ export function BuilderIOIntegration() {
   const previewPage = (page: BuilderPage) => {
     // In a real implementation, this would open the Builder.io preview
     const previewUrl = `https://cdn.builder.io/content/${config.spaceId}/${page.model}/${page.id}`;
-    window.open(previewUrl, '_blank');
+    window.open(previewUrl, "_blank");
   };
 
   return (
@@ -509,18 +543,14 @@ export function BuilderIOIntegration() {
             <h2 className="font-semibold text-lg">Builder.io Visual Editor</h2>
           </div>
           <Badge variant="outline" className="bg-green-50 text-green-700">
-            {config.isConfigured ? 'Connected' : 'Setup Required'}
+            {config.isConfigured ? "Connected" : "Setup Required"}
           </Badge>
         </div>
 
         <div className="flex items-center space-x-2">
           {config.isConfigured && (
             <>
-              <Button
-                onClick={createNewPage}
-                disabled={isLoading}
-                size="sm"
-              >
+              <Button onClick={createNewPage} disabled={isLoading} size="sm">
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
@@ -528,7 +558,7 @@ export function BuilderIOIntegration() {
                 )}
                 New Page
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="sm"
@@ -563,7 +593,7 @@ export function BuilderIOIntegration() {
                   Connect your Builder.io account to enable the visual editor
                 </DialogDescription>
               </DialogHeader>
-              <BuilderConfigForm 
+              <BuilderConfigForm
                 config={formConfig}
                 onChange={setFormConfig}
                 onSave={handleConfigSave}
@@ -579,7 +609,11 @@ export function BuilderIOIntegration() {
         {!config.isConfigured ? (
           <BuilderSetupWelcome onConfigure={() => setShowConfigDialog(true)} />
         ) : (
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="h-full flex flex-col"
+          >
             <div className="border-b px-4">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="templates">Templates</TabsTrigger>
@@ -601,22 +635,28 @@ export function BuilderIOIntegration() {
                   onSelectContent={(content) => {
                     const newPage: BuilderPage = {
                       id: content.id,
-                      name: content.name || content.data?.title || 'Imported Content',
-                      url: content.data?.url || `/${content.name?.toLowerCase().replace(/\s+/g, '-')}` || '/imported',
+                      name:
+                        content.name ||
+                        content.data?.title ||
+                        "Imported Content",
+                      url:
+                        content.data?.url ||
+                        `/${content.name?.toLowerCase().replace(/\s+/g, "-")}` ||
+                        "/imported",
                       published: !!content.published,
                       lastModified: new Date(content.lastUpdated || Date.now()),
-                      model: content.modelName || 'page'
+                      model: content.modelName || "page",
                     };
-                    setPages(prev => {
-                      const exists = prev.find(p => p.id === content.id);
+                    setPages((prev) => {
+                      const exists = prev.find((p) => p.id === content.id);
                       if (exists) return prev;
                       return [...prev, newPage];
                     });
                     setSelectedPage(newPage);
-                    setActiveTab('editor');
+                    setActiveTab("editor");
                     testToast()({
-                      title: 'Content Selected!',
-                      description: `${newPage.name} is now ready for editing.`
+                      title: "Content Selected!",
+                      description: `${newPage.name} is now ready for editing.`,
                     });
                   }}
                   isLoading={isLoading}
@@ -624,7 +664,7 @@ export function BuilderIOIntegration() {
               </TabsContent>
 
               <TabsContent value="editor" className="h-full m-0">
-                <BuilderVisualEditor 
+                <BuilderVisualEditor
                   selectedPage={selectedPage}
                   onPageSelect={setSelectedPage}
                   onOpenEditor={openBuilderEditor}
@@ -633,7 +673,7 @@ export function BuilderIOIntegration() {
               </TabsContent>
 
               <TabsContent value="pages" className="m-0 p-4">
-                <BuilderPageManager 
+                <BuilderPageManager
                   pages={pages}
                   onPageSelect={setSelectedPage}
                   onPublish={publishPage}
@@ -666,7 +706,12 @@ interface BuilderConfigFormProps {
   isLoading: boolean;
 }
 
-function BuilderConfigForm({ config, onChange, onSave, isLoading }: BuilderConfigFormProps) {
+function BuilderConfigForm({
+  config,
+  onChange,
+  onSave,
+  isLoading,
+}: BuilderConfigFormProps) {
   return (
     <div className="space-y-4">
       <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
@@ -683,7 +728,9 @@ function BuilderConfigForm({ config, onChange, onSave, isLoading }: BuilderConfi
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('https://builder.io/account/space', '_blank')}
+            onClick={() =>
+              window.open("https://builder.io/account/space", "_blank")
+            }
           >
             <ExternalLink className="h-3 w-3 mr-1" />
             Open Dashboard
@@ -691,7 +738,9 @@ function BuilderConfigForm({ config, onChange, onSave, isLoading }: BuilderConfi
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('https://www.builder.io/c/docs/developers', '_blank')}
+            onClick={() =>
+              window.open("https://www.builder.io/c/docs/developers", "_blank")
+            }
           >
             <FileText className="h-3 w-3 mr-1" />
             API Guide
@@ -706,7 +755,9 @@ function BuilderConfigForm({ config, onChange, onSave, isLoading }: BuilderConfi
             id="publicApiKey"
             placeholder="Enter your public API key"
             value={config.publicApiKey}
-            onChange={(e) => onChange({ ...config, publicApiKey: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...config, publicApiKey: e.target.value })
+            }
           />
         </div>
 
@@ -748,7 +799,12 @@ function BuilderConfigForm({ config, onChange, onSave, isLoading }: BuilderConfi
         </Button>
         <Button
           onClick={onSave}
-          disabled={!config.publicApiKey || !config.apiKey || !config.spaceId || isLoading}
+          disabled={
+            !config.publicApiKey ||
+            !config.apiKey ||
+            !config.spaceId ||
+            isLoading
+          }
         >
           {isLoading ? (
             <>
@@ -776,9 +832,12 @@ function BuilderSetupWelcome({ onConfigure }: { onConfigure: () => void }) {
           <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
             <Building2 className="w-10 h-10 text-primary" />
           </div>
-          <h2 className="text-3xl font-bold">Welcome to Builder.io Integration</h2>
+          <h2 className="text-3xl font-bold">
+            Welcome to Builder.io Integration
+          </h2>
           <p className="text-lg text-muted-foreground">
-            Connect your Builder.io account to unlock powerful visual editing capabilities
+            Connect your Builder.io account to unlock powerful visual editing
+            capabilities
           </p>
         </div>
 
@@ -835,12 +894,12 @@ function BuilderSetupWelcome({ onConfigure }: { onConfigure: () => void }) {
   );
 }
 
-// Visual Editor Component 
-function BuilderVisualEditor({ 
-  selectedPage, 
-  onPageSelect, 
-  onOpenEditor, 
-  config 
+// Visual Editor Component
+function BuilderVisualEditor({
+  selectedPage,
+  onPageSelect,
+  onOpenEditor,
+  config,
 }: {
   selectedPage: BuilderPage | null;
   onPageSelect: (page: BuilderPage) => void;
@@ -857,11 +916,15 @@ function BuilderVisualEditor({
               <div className="border-b p-4 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold">{selectedPage.name}</h3>
-                  <p className="text-sm text-muted-foreground">{selectedPage.url}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedPage.url}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Badge variant={selectedPage.published ? "default" : "secondary"}>
-                    {selectedPage.published ? 'Published' : 'Draft'}
+                  <Badge
+                    variant={selectedPage.published ? "default" : "secondary"}
+                  >
+                    {selectedPage.published ? "Published" : "Draft"}
                   </Badge>
                   <Button size="sm" onClick={() => onOpenEditor(selectedPage)}>
                     <ExternalLink className="h-4 w-4 mr-1" />
@@ -869,7 +932,7 @@ function BuilderVisualEditor({
                   </Button>
                 </div>
               </div>
-              
+
               {/* Active Builder.io Visual Editor */}
               <div className="flex-1 bg-white dark:bg-gray-900 relative overflow-hidden">
                 <ActiveBuilderEditor
@@ -878,11 +941,11 @@ function BuilderVisualEditor({
                     try {
                       const toastFn = testToast();
                       toastFn({
-                        title: 'Page Saved!',
-                        description: `Changes to ${selectedPage.name} have been saved successfully.`
+                        title: "Page Saved!",
+                        description: `Changes to ${selectedPage.name} have been saved successfully.`,
                       });
                     } catch (error) {
-                      console.error('Toast error:', error);
+                      console.error("Toast error:", error);
                     }
                   }}
                 />
@@ -896,7 +959,9 @@ function BuilderVisualEditor({
                 </div>
                 <div>
                   <h4 className="font-semibold">Select a Page to Edit</h4>
-                  <p className="text-muted-foreground">Choose a page from the pages tab to start editing</p>
+                  <p className="text-muted-foreground">
+                    Choose a page from the pages tab to start editing
+                  </p>
                 </div>
               </div>
             </div>
@@ -908,13 +973,13 @@ function BuilderVisualEditor({
 }
 
 // Page Manager Component
-function BuilderPageManager({ 
-  pages, 
-  onPageSelect, 
-  onPublish, 
-  onPreview, 
+function BuilderPageManager({
+  pages,
+  onPageSelect,
+  onPublish,
+  onPreview,
   onEdit,
-  isLoading 
+  isLoading,
 }: {
   pages: BuilderPage[];
   onPageSelect: (page: BuilderPage) => void;
@@ -928,20 +993,25 @@ function BuilderPageManager({
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-semibold">Page Management</h3>
-          <p className="text-muted-foreground">Manage your Builder.io pages and content</p>
+          <p className="text-muted-foreground">
+            Manage your Builder.io pages and content
+          </p>
         </div>
       </div>
 
       <div className="grid gap-4">
         {pages.map((page) => (
-          <Card key={page.id} className="cursor-pointer hover:shadow-md transition-shadow">
+          <Card
+            key={page.id}
+            className="cursor-pointer hover:shadow-md transition-shadow"
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-3">
                     <h4 className="font-medium">{page.name}</h4>
                     <Badge variant={page.published ? "default" : "secondary"}>
-                      {page.published ? 'Published' : 'Draft'}
+                      {page.published ? "Published" : "Draft"}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">{page.url}</p>
@@ -959,7 +1029,7 @@ function BuilderPageManager({
                     <Eye className="h-4 w-4 mr-1" />
                     Preview
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     size="sm"
@@ -996,17 +1066,19 @@ function BuilderPageManager({
 // Models Manager Component
 function BuilderModelsManager({ config }: { config: BuilderIOConfig }) {
   const models = [
-    { name: 'page', description: 'Standard web pages', count: 12 },
-    { name: 'product', description: 'E-commerce products', count: 45 },
-    { name: 'blog-post', description: 'Blog articles', count: 8 },
-    { name: 'landing-page', description: 'Marketing pages', count: 6 }
+    { name: "page", description: "Standard web pages", count: 12 },
+    { name: "product", description: "E-commerce products", count: 45 },
+    { name: "blog-post", description: "Blog articles", count: 8 },
+    { name: "landing-page", description: "Marketing pages", count: 6 },
   ];
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold">Content Models</h3>
-        <p className="text-muted-foreground">Manage your Builder.io content models and schemas</p>
+        <p className="text-muted-foreground">
+          Manage your Builder.io content models and schemas
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -1040,7 +1112,7 @@ function BuilderSpaceExplorer({
   isConnectedToRealSpace,
   onFetchContents,
   onSelectContent,
-  isLoading
+  isLoading,
 }: {
   config: BuilderIOConfig;
   spaceContents: any[];
@@ -1050,16 +1122,16 @@ function BuilderSpaceExplorer({
   onSelectContent: (content: any) => void;
   isLoading: boolean;
 }) {
-  const [selectedModel, setSelectedModel] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedModel, setSelectedModel] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { toast } = useToast();
   const testToast = React.useCallback(() => {
-    if (typeof toast === 'function') {
+    if (typeof toast === "function") {
       return toast;
     } else {
-      console.error('Toast function not available');
+      console.error("Toast function not available");
       return () => {};
     }
   }, [toast]);
@@ -1069,21 +1141,35 @@ function BuilderSpaceExplorer({
   const safeMockTemplates = Array.isArray(mockTemplates) ? mockTemplates : [];
 
   // Use real space contents if connected, otherwise show mock templates
-  const displayContents = isConnectedToRealSpace ? safeSpaceContents : safeMockTemplates;
+  const displayContents = isConnectedToRealSpace
+    ? safeSpaceContents
+    : safeMockTemplates;
 
   // Get unique models/types from the content
   const models = isConnectedToRealSpace
-    ? ['All', ...Array.from(new Set(safeSpaceContents.map(c => c.modelName || 'page')))]
-    : ['All', ...Array.from(new Set(safeMockTemplates.map(t => t.category)))];
+    ? [
+        "All",
+        ...Array.from(
+          new Set(safeSpaceContents.map((c) => c.modelName || "page")),
+        ),
+      ]
+    : ["All", ...Array.from(new Set(safeMockTemplates.map((t) => t.category)))];
 
-  const filteredContents = displayContents.filter(content => {
-    const modelName = isConnectedToRealSpace ? (content.modelName || 'page') : content.category;
-    const contentName = isConnectedToRealSpace ? (content.name || content.data?.title || '') : content.name;
-    const contentDesc = isConnectedToRealSpace ? (content.data?.description || '') : content.description;
+  const filteredContents = displayContents.filter((content) => {
+    const modelName = isConnectedToRealSpace
+      ? content.modelName || "page"
+      : content.category;
+    const contentName = isConnectedToRealSpace
+      ? content.name || content.data?.title || ""
+      : content.name;
+    const contentDesc = isConnectedToRealSpace
+      ? content.data?.description || ""
+      : content.description;
 
-    const matchesModel = selectedModel === 'All' || modelName === selectedModel;
-    const matchesSearch = contentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         contentDesc.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesModel = selectedModel === "All" || modelName === selectedModel;
+    const matchesSearch =
+      contentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contentDesc.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesModel && matchesSearch;
   });
@@ -1094,7 +1180,8 @@ function BuilderSpaceExplorer({
         <Key className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
         <h4 className="text-lg font-semibold mb-2">Builder.io Not Connected</h4>
         <p className="text-muted-foreground mb-4">
-          Please configure your Builder.io credentials to view your space contents.
+          Please configure your Builder.io credentials to view your space
+          contents.
         </p>
         <Button onClick={() => {}}>
           <Settings className="w-4 h-4 mr-2" />
@@ -1110,7 +1197,7 @@ function BuilderSpaceExplorer({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h3 className="text-lg font-semibold">
-            {isConnectedToRealSpace ? 'Your Builder.io Space' : 'Demo Content'}
+            {isConnectedToRealSpace ? "Your Builder.io Space" : "Demo Content"}
           </h3>
           <p className="text-muted-foreground">
             {isConnectedToRealSpace
@@ -1134,10 +1221,10 @@ function BuilderSpaceExplorer({
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  console.log('Config debug:', config);
+                  console.log("Config debug:", config);
                   testToast()({
-                    title: 'Current Config',
-                    description: `Space: ${config.spaceId}, Key: ${config.publicApiKey ? config.publicApiKey.slice(0, 12) + '...' : 'Missing'}`
+                    title: "Current Config",
+                    description: `Space: ${config.spaceId}, Key: ${config.publicApiKey ? config.publicApiKey.slice(0, 12) + "..." : "Missing"}`,
                   });
                 }}
               >
@@ -1158,23 +1245,25 @@ function BuilderSpaceExplorer({
             onChange={(e) => setSelectedModel(e.target.value)}
             className="px-3 py-2 border rounded-md bg-background"
           >
-            {models.map(model => (
-              <option key={model} value={model}>{model}</option>
+            {models.map((model) => (
+              <option key={model} value={model}>
+                {model}
+              </option>
             ))}
           </select>
 
           <div className="flex border rounded-md">
             <Button
-              variant={viewMode === 'grid' ? 'default' : 'ghost'}
+              variant={viewMode === "grid" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode('grid')}
+              onClick={() => setViewMode("grid")}
             >
               <Layout className="h-4 w-4" />
             </Button>
             <Button
-              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              variant={viewMode === "list" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode('list')}
+              onClick={() => setViewMode("list")}
             >
               <FileText className="h-4 w-4" />
             </Button>
@@ -1183,7 +1272,7 @@ function BuilderSpaceExplorer({
       </div>
 
       {/* Content Grid/List */}
-      {viewMode === 'grid' ? (
+      {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredContents.map((content, index) => (
             <SpaceContentCard
@@ -1194,9 +1283,9 @@ function BuilderSpaceExplorer({
               onPreview={() => {
                 const previewUrl = isConnectedToRealSpace
                   ? `https://cdn.builder.io/content/${config.spaceId}/${content.modelName}/${content.id}`
-                  : '#';
-                if (previewUrl !== '#') {
-                  window.open(previewUrl, '_blank');
+                  : "#";
+                if (previewUrl !== "#") {
+                  window.open(previewUrl, "_blank");
                 }
               }}
             />
@@ -1220,10 +1309,10 @@ function BuilderSpaceExplorer({
           <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <h4 className="text-lg font-semibold mb-2">No Content Found</h4>
           <p className="text-muted-foreground">
-            {searchQuery || selectedModel !== 'All'
-              ? 'Try adjusting your search or filter criteria.'
+            {searchQuery || selectedModel !== "All"
+              ? "Try adjusting your search or filter criteria."
               : isConnectedToRealSpace
-                ? 'Your Builder.io space appears to be empty.'
+                ? "Your Builder.io space appears to be empty."
                 : 'Click "Load My Space" to see your actual content.'}
           </p>
         </div>
@@ -1235,12 +1324,12 @@ function BuilderSpaceExplorer({
           <Database className="w-6 h-6 text-primary mt-1" />
           <div className="space-y-2">
             <h4 className="font-semibold">
-              {isConnectedToRealSpace ? 'Connected to Your Space' : 'Demo Mode'}
+              {isConnectedToRealSpace ? "Connected to Your Space" : "Demo Mode"}
             </h4>
             <p className="text-sm text-muted-foreground">
               {isConnectedToRealSpace
-                ? 'You\'re viewing real content from your Builder.io space. Select any item to import and edit it in this platform.'
-                : 'This is demo content. Connect to your Builder.io space to see your actual templates and content.'}
+                ? "You're viewing real content from your Builder.io space. Select any item to import and edit it in this platform."
+                : "This is demo content. Connect to your Builder.io space to see your actual templates and content."}
             </p>
             <div className="flex items-center space-x-4 mt-3">
               <div className="flex items-center text-sm text-muted-foreground">
@@ -1249,7 +1338,10 @@ function BuilderSpaceExplorer({
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Key className="w-4 h-4 mr-1 text-yellow-600" />
-                API: {config.publicApiKey ? `${config.publicApiKey.slice(0, 8)}...` : 'Not set'}
+                API:{" "}
+                {config.publicApiKey
+                  ? `${config.publicApiKey.slice(0, 8)}...`
+                  : "Not set"}
               </div>
               {isConnectedToRealSpace && (
                 <div className="flex items-center text-sm text-muted-foreground">
@@ -1270,18 +1362,26 @@ function SpaceContentCard({
   content,
   isRealContent,
   onSelect,
-  onPreview
+  onPreview,
 }: {
   content: any;
   isRealContent: boolean;
   onSelect: () => void;
   onPreview: () => void;
 }) {
-  const contentName = isRealContent ? (content.name || content.data?.title || 'Untitled') : content.name;
-  const contentDesc = isRealContent ? (content.data?.description || 'No description') : content.description;
-  const modelName = isRealContent ? (content.modelName || 'page') : content.category;
+  const contentName = isRealContent
+    ? content.name || content.data?.title || "Untitled"
+    : content.name;
+  const contentDesc = isRealContent
+    ? content.data?.description || "No description"
+    : content.description;
+  const modelName = isRealContent
+    ? content.modelName || "page"
+    : content.category;
   const isPublished = isRealContent ? !!content.published : content.isImported;
-  const lastModified = isRealContent ? new Date(content.lastUpdated) : content.lastModified;
+  const lastModified = isRealContent
+    ? new Date(content.lastUpdated)
+    : content.lastModified;
 
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
@@ -1290,14 +1390,14 @@ function SpaceContentCard({
           <div className="text-center space-y-2">
             <Layout className="w-12 h-12 mx-auto text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              {isRealContent ? 'Live Content' : 'Demo Template'}
+              {isRealContent ? "Live Content" : "Demo Template"}
             </p>
           </div>
         </div>
 
         <div className="absolute top-2 right-2">
           <Badge variant={isPublished ? "default" : "secondary"}>
-            {isPublished ? 'Published' : 'Draft'}
+            {isPublished ? "Published" : "Draft"}
           </Badge>
         </div>
 
@@ -1309,8 +1409,12 @@ function SpaceContentCard({
       <CardContent className="p-4">
         <div className="space-y-3">
           <div>
-            <h4 className="font-semibold text-base line-clamp-1">{contentName}</h4>
-            <p className="text-sm text-muted-foreground line-clamp-2">{contentDesc}</p>
+            <h4 className="font-semibold text-base line-clamp-1">
+              {contentName}
+            </h4>
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {contentDesc}
+            </p>
           </div>
 
           <div className="text-xs text-muted-foreground">
@@ -1342,16 +1446,22 @@ function SpaceContentCard({
 function SpaceContentListItem({
   content,
   isRealContent,
-  onSelect
+  onSelect,
 }: {
   content: any;
   isRealContent: boolean;
   onSelect: () => void;
 }) {
-  const contentName = isRealContent ? (content.name || content.data?.title || 'Untitled') : content.name;
-  const modelName = isRealContent ? (content.modelName || 'page') : content.category;
+  const contentName = isRealContent
+    ? content.name || content.data?.title || "Untitled"
+    : content.name;
+  const modelName = isRealContent
+    ? content.modelName || "page"
+    : content.category;
   const isPublished = isRealContent ? !!content.published : content.isImported;
-  const lastModified = isRealContent ? new Date(content.lastUpdated) : content.lastModified;
+  const lastModified = isRealContent
+    ? new Date(content.lastUpdated)
+    : content.lastModified;
 
   return (
     <Card className="hover:shadow-sm transition-shadow">
@@ -1360,9 +1470,14 @@ function SpaceContentListItem({
           <div className="flex-1 space-y-1">
             <div className="flex items-center space-x-3">
               <h4 className="font-medium">{contentName}</h4>
-              <Badge variant="outline" className="text-xs">{modelName}</Badge>
-              <Badge variant={isPublished ? "default" : "secondary"} className="text-xs">
-                {isPublished ? 'Published' : 'Draft'}
+              <Badge variant="outline" className="text-xs">
+                {modelName}
+              </Badge>
+              <Badge
+                variant={isPublished ? "default" : "secondary"}
+                className="text-xs"
+              >
+                {isPublished ? "Published" : "Draft"}
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground">
@@ -1391,21 +1506,25 @@ function BuilderAnalytics({ config }: { config: BuilderIOConfig }) {
     pageViews: 12456,
     uniqueVisitors: 3428,
     avgLoadTime: 0.8,
-    conversionRate: 3.2
+    conversionRate: 3.2,
   };
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold">Performance Analytics</h3>
-        <p className="text-muted-foreground">Track your Builder.io content performance</p>
+        <p className="text-muted-foreground">
+          Track your Builder.io content performance
+        </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">{analytics.pageViews.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                {analytics.pageViews.toLocaleString()}
+              </div>
               <p className="text-muted-foreground">Page Views</p>
             </div>
           </CardContent>
@@ -1414,7 +1533,9 @@ function BuilderAnalytics({ config }: { config: BuilderIOConfig }) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">{analytics.uniqueVisitors.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                {analytics.uniqueVisitors.toLocaleString()}
+              </div>
               <p className="text-muted-foreground">Unique Visitors</p>
             </div>
           </CardContent>
@@ -1432,7 +1553,9 @@ function BuilderAnalytics({ config }: { config: BuilderIOConfig }) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">{analytics.conversionRate}%</div>
+              <div className="text-2xl font-bold">
+                {analytics.conversionRate}%
+              </div>
               <p className="text-muted-foreground">Conversion Rate</p>
             </div>
           </CardContent>

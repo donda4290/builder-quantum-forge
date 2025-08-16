@@ -1,19 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  ExternalLink, 
-  Eye, 
-  Save, 
+import React, { useEffect, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  ExternalLink,
+  Eye,
+  Save,
   Settings,
   Monitor,
   Tablet,
   Smartphone,
   Undo,
   Redo,
-  Loader2
-} from 'lucide-react';
+  Loader2,
+} from "lucide-react";
 
 interface BuilderSDKEditorProps {
   publicApiKey: string;
@@ -30,17 +30,19 @@ export function BuilderSDKEditor({
   contentId,
   onSave,
   onPreview,
-  className = ""
+  className = "",
 }: BuilderSDKEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [previewMode, setPreviewMode] = React.useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [previewMode, setPreviewMode] = React.useState<
+    "desktop" | "tablet" | "mobile"
+  >("desktop");
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
   useEffect(() => {
     // Initialize Builder.io editor
     initializeBuilderEditor();
-    
+
     return () => {
       // Cleanup editor instance
       cleanupEditor();
@@ -50,11 +52,11 @@ export function BuilderSDKEditor({
   const initializeBuilderEditor = async () => {
     try {
       setIsLoading(true);
-      
+
       // In a real implementation, this would load and initialize the Builder.io SDK
       // For demo purposes, we'll simulate the loading
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Mock Builder.io editor initialization
       if (editorRef.current) {
         // This would be replaced with actual Builder.io SDK initialization:
@@ -62,7 +64,7 @@ export function BuilderSDKEditor({
         // await builder.init(publicApiKey);
         // const editor = await builder.edit({ model, content: contentId });
         // editor.render(editorRef.current);
-        
+
         // For demo, we'll show a placeholder with Builder.io styling
         editorRef.current.innerHTML = `
           <div class="builder-editor-placeholder" style="
@@ -97,34 +99,36 @@ export function BuilderSDKEditor({
           </div>
         `;
       }
-      
+
       setIsLoading(false);
     } catch (error) {
-      console.error('Failed to initialize Builder.io editor:', error);
+      console.error("Failed to initialize Builder.io editor:", error);
       setIsLoading(false);
     }
   };
 
   const cleanupEditor = () => {
     if (editorRef.current) {
-      editorRef.current.innerHTML = '';
+      editorRef.current.innerHTML = "";
     }
   };
 
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      
+
       // In a real implementation, this would save the content via Builder.io SDK
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setHasUnsavedChanges(false);
       onSave?.({
-        id: contentId || 'new-content',
-        data: { /* content data from Builder.io */ }
+        id: contentId || "new-content",
+        data: {
+          /* content data from Builder.io */
+        },
       });
     } catch (error) {
-      console.error('Failed to save content:', error);
+      console.error("Failed to save content:", error);
     } finally {
       setIsLoading(false);
     }
@@ -136,9 +140,12 @@ export function BuilderSDKEditor({
 
   const getDeviceWidth = () => {
     switch (previewMode) {
-      case 'mobile': return '375px';
-      case 'tablet': return '768px';
-      default: return '100%';
+      case "mobile":
+        return "375px";
+      case "tablet":
+        return "768px";
+      default:
+        return "100%";
     }
   };
 
@@ -161,15 +168,19 @@ export function BuilderSDKEditor({
           {/* Device Preview Controls */}
           <div className="flex items-center border rounded-lg p-1">
             {[
-              { mode: 'desktop' as const, icon: Monitor },
-              { mode: 'tablet' as const, icon: Tablet },
-              { mode: 'mobile' as const, icon: Smartphone }
+              { mode: "desktop" as const, icon: Monitor },
+              { mode: "tablet" as const, icon: Tablet },
+              { mode: "mobile" as const, icon: Smartphone },
             ].map(({ mode, icon: Icon }) => (
               <Button
                 key={mode}
                 variant="ghost"
                 size="sm"
-                className={previewMode === mode ? "bg-primary text-primary-foreground" : ""}
+                className={
+                  previewMode === mode
+                    ? "bg-primary text-primary-foreground"
+                    : ""
+                }
                 onClick={() => setPreviewMode(mode)}
               >
                 <Icon className="h-4 w-4" />
@@ -224,28 +235,32 @@ export function BuilderSDKEditor({
               <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-50">
                 <div className="text-center space-y-3">
                   <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                  <p className="text-sm text-muted-foreground">Loading Builder.io Editor...</p>
+                  <p className="text-sm text-muted-foreground">
+                    Loading Builder.io Editor...
+                  </p>
                 </div>
               </div>
             )}
-            
+
             {/* Responsive Container */}
             <div className="h-full flex justify-center p-4">
-              <div 
+              <div
                 className="transition-all duration-300 max-w-full"
                 style={{ width: getDeviceWidth() }}
               >
-                {previewMode !== 'desktop' && (
+                {previewMode !== "desktop" && (
                   <div className="text-center text-xs text-muted-foreground mb-2">
-                    {previewMode === 'mobile' ? 'Mobile View (375px)' : 'Tablet View (768px)'}
+                    {previewMode === "mobile"
+                      ? "Mobile View (375px)"
+                      : "Tablet View (768px)"}
                   </div>
                 )}
-                
+
                 {/* Builder.io Editor Container */}
-                <div 
+                <div
                   ref={editorRef}
                   className="h-full w-full border rounded-lg overflow-hidden"
-                  style={{ minHeight: '600px' }}
+                  style={{ minHeight: "600px" }}
                 />
               </div>
             </div>
@@ -264,7 +279,7 @@ export function useBuilderIO(publicApiKey: string) {
 
   const initialize = React.useCallback(async () => {
     if (!publicApiKey) {
-      setError('Public API key is required');
+      setError("Public API key is required");
       return false;
     }
 
@@ -275,14 +290,16 @@ export function useBuilderIO(publicApiKey: string) {
       // In a real implementation, this would initialize the Builder.io SDK
       // import { builder } from '@builder.io/sdk';
       // await builder.init(publicApiKey);
-      
+
       // For demo purposes, simulate initialization
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setIsInitialized(true);
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to initialize Builder.io');
+      setError(
+        err instanceof Error ? err.message : "Failed to initialize Builder.io",
+      );
       return false;
     } finally {
       setIsLoading(false);
@@ -299,7 +316,7 @@ export function useBuilderIO(publicApiKey: string) {
     isInitialized,
     isLoading,
     error,
-    initialize
+    initialize,
   };
 }
 
@@ -311,11 +328,11 @@ interface BuilderContentProps {
   className?: string;
 }
 
-export function BuilderContent({ 
-  model, 
-  content, 
-  publicApiKey, 
-  className = "" 
+export function BuilderContent({
+  model,
+  content,
+  publicApiKey,
+  className = "",
 }: BuilderContentProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -330,11 +347,11 @@ export function BuilderContent({
   const renderContent = async () => {
     try {
       setIsLoading(true);
-      
+
       // In a real implementation, this would render Builder.io content
       // const html = await builder.content(model, { content });
       // contentRef.current.innerHTML = html;
-      
+
       // For demo purposes, show placeholder content
       if (contentRef.current) {
         contentRef.current.innerHTML = `
@@ -344,10 +361,10 @@ export function BuilderContent({
           </div>
         `;
       }
-      
+
       setIsLoading(false);
     } catch (error) {
-      console.error('Failed to render Builder.io content:', error);
+      console.error("Failed to render Builder.io content:", error);
       setIsLoading(false);
     }
   };

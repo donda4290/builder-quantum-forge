@@ -5,6 +5,7 @@ This document explains how to fully integrate Builder.io's visual editor into yo
 ## Overview
 
 The Builder.io integration provides:
+
 - **Visual Drag & Drop Editor**: Professional visual page builder
 - **Content Management**: Full CMS capabilities with versioning
 - **Performance Optimization**: Built-in CDN and optimization
@@ -50,7 +51,7 @@ VITE_BUILDER_SPACE_ID=your_space_id
 
 ```tsx
 // utils/builder.ts
-import { builder } from '@builder.io/sdk';
+import { builder } from "@builder.io/sdk";
 
 // Initialize Builder
 builder.init(process.env.VITE_BUILDER_PUBLIC_KEY!);
@@ -67,8 +68,8 @@ export { builder };
 
 ```tsx
 // components/BuilderComponent.tsx
-import { BuilderComponent as BuilderComponentSDK } from '@builder.io/react';
-import { builder } from '../utils/builder';
+import { BuilderComponent as BuilderComponentSDK } from "@builder.io/react";
+import { builder } from "../utils/builder";
 
 interface Props {
   model: string;
@@ -90,7 +91,7 @@ export function BuilderComponent({ model, content }: Props) {
 
 ```tsx
 // components/BuilderEditor.tsx
-import { BuilderEditor } from '@builder.io/widgets';
+import { BuilderEditor } from "@builder.io/widgets";
 
 interface Props {
   model: string;
@@ -115,6 +116,7 @@ export function VisualEditor({ model, contentId, onSave }: Props) {
 ### 1. Default Models
 
 Builder.io comes with these models:
+
 - **page**: Web pages
 - **symbol**: Reusable components
 - **data**: Structured data
@@ -126,17 +128,21 @@ Create custom models for your needs:
 ```tsx
 // Define custom models
 const models = {
-  'product-page': {
+  "product-page": {
     fields: [
-      { name: 'title', type: 'text', required: true },
-      { name: 'price', type: 'number', required: true },
-      { name: 'description', type: 'richText' },
-      { name: 'images', type: 'list', subFields: [
-        { name: 'image', type: 'image' },
-        { name: 'alt', type: 'text' }
-      ]}
-    ]
-  }
+      { name: "title", type: "text", required: true },
+      { name: "price", type: "number", required: true },
+      { name: "description", type: "richText" },
+      {
+        name: "images",
+        type: "list",
+        subFields: [
+          { name: "image", type: "image" },
+          { name: "alt", type: "text" },
+        ],
+      },
+    ],
+  },
 };
 ```
 
@@ -145,21 +151,17 @@ const models = {
 ### 1. Fetch Content
 
 ```tsx
-import { builder } from '@builder.io/sdk';
+import { builder } from "@builder.io/sdk";
 
 // Fetch page content
 const getPage = async (url: string) => {
-  const content = await builder
-    .get('page', { url })
-    .promise();
+  const content = await builder.get("page", { url }).promise();
   return content;
 };
 
 // Fetch all products
 const getProducts = async () => {
-  const products = await builder
-    .getAll('product', { limit: 100 })
-    .promise();
+  const products = await builder.getAll("product", { limit: 100 }).promise();
   return products;
 };
 ```
@@ -169,9 +171,7 @@ const getProducts = async () => {
 ```tsx
 // Create new page
 const createPage = async (pageData: any) => {
-  const content = await builder
-    .create('page', pageData)
-    .promise();
+  const content = await builder.create("page", pageData).promise();
   return content;
 };
 ```
@@ -181,9 +181,7 @@ const createPage = async (pageData: any) => {
 ```tsx
 // Update existing content
 const updateContent = async (id: string, updates: any) => {
-  const content = await builder
-    .update('page', id, updates)
-    .promise();
+  const content = await builder.update("page", id, updates).promise();
   return content;
 };
 ```
@@ -193,6 +191,7 @@ const updateContent = async (id: string, updates: any) => {
 ### 1. Visual Editor Integration
 
 The current implementation provides:
+
 - ✅ **Configuration Management**: API key setup and validation
 - ✅ **Content Management**: Create, edit, publish content
 - ✅ **Page Management**: Multiple page support
@@ -210,6 +209,7 @@ The current implementation provides:
 ### 3. Context Management
 
 The `BuilderIOContext` provides:
+
 - Configuration state
 - Content management
 - Analytics data
@@ -230,6 +230,7 @@ VITE_BUILDER_SPACE_ID=prod_space_id
 ### 2. CDN Integration
 
 Builder.io automatically provides:
+
 - Global CDN delivery
 - Image optimization
 - Code splitting
@@ -239,20 +240,20 @@ Builder.io automatically provides:
 
 ```tsx
 // SEO integration
-import { builder } from '@builder.io/sdk';
+import { builder } from "@builder.io/sdk";
 
 const getPageSEO = async (url: string) => {
   const content = await builder
-    .get('page', { 
+    .get("page", {
       url,
-      fields: 'data.title,data.description,data.keywords'
+      fields: "data.title,data.description,data.keywords",
     })
     .promise();
-    
+
   return {
     title: content?.data?.title,
     description: content?.data?.description,
-    keywords: content?.data?.keywords
+    keywords: content?.data?.keywords,
   };
 };
 ```
@@ -267,10 +268,10 @@ Test content before publishing:
 // Preview mode
 const previewContent = async (id: string) => {
   const content = await builder
-    .get('page', { 
+    .get("page", {
       id,
       cachebust: true,
-      preview: true 
+      preview: true,
     })
     .promise();
   return content;
@@ -285,10 +286,10 @@ Builder.io includes built-in A/B testing:
 // Create variation
 const createVariation = async (contentId: string, variation: any) => {
   const result = await builder
-    .create('page', {
+    .create("page", {
       ...variation,
       testRatio: 0.5, // 50/50 split
-      baseContentId: contentId
+      baseContentId: contentId,
     })
     .promise();
   return result;

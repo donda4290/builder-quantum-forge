@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { 
-  MessageCircle, 
-  Send, 
-  Bot, 
-  User, 
+import React, { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  MessageCircle,
+  Send,
+  Bot,
+  User,
   Wand2,
   Palette,
   Layout,
@@ -23,14 +23,14 @@ import {
   Building2,
   ShoppingCart,
   Loader2,
-  Sparkles
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { AdvancedWebsiteBuilder } from './AdvancedWebsiteBuilder';
+  Sparkles,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { AdvancedWebsiteBuilder } from "./AdvancedWebsiteBuilder";
 
 interface ChatMessage {
   id: string;
-  type: 'user' | 'bot';
+  type: "user" | "bot";
   content: string;
   timestamp: Date;
   suggestions?: string[];
@@ -40,7 +40,7 @@ interface ChatMessage {
 interface ChatAction {
   id: string;
   label: string;
-  type: 'component' | 'style' | 'layout' | 'content';
+  type: "component" | "style" | "layout" | "content";
   action: () => void;
   icon?: React.ReactNode;
 }
@@ -56,11 +56,11 @@ export function BuilderChatbotSidebar({
   onComponentAdd,
   onStyleChange,
   onLayoutSuggestion,
-  currentPage
+  currentPage,
 }: BuilderChatbotSidebarProps) {
   const { toast } = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showAdvancedBuilder, setShowAdvancedBuilder] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -70,31 +70,32 @@ export function BuilderChatbotSidebar({
   useEffect(() => {
     if (messages.length === 0) {
       const welcomeMessage: ChatMessage = {
-        id: 'welcome',
-        type: 'bot',
-        content: "🤖 Hi! I'm your AI website building assistant. I can build complete, professional websites automatically or help with specific components.",
+        id: "welcome",
+        type: "bot",
+        content:
+          "🤖 Hi! I'm your AI website building assistant. I can build complete, professional websites automatically or help with specific components.",
         timestamp: new Date(),
         actions: [
           {
-            id: 'full-website-builder',
-            label: '🚀 Build Complete Website',
-            type: 'component',
+            id: "full-website-builder",
+            label: "🚀 Build Complete Website",
+            type: "component",
             icon: <Sparkles className="h-4 w-4" />,
             action: () => {
               setShowAdvancedBuilder(true);
-              toast({ 
-                title: '🎯 Advanced Website Builder Activated!', 
-                description: 'Choose from professional templates below.' 
+              toast({
+                title: "🎯 Advanced Website Builder Activated!",
+                description: "Choose from professional templates below.",
               });
-            }
-          }
+            },
+          },
         ],
         suggestions: [
           "Build luxury e-commerce store",
-          "Create developer portfolio", 
+          "Create developer portfolio",
           "Add hero section",
-          "Change color theme"
-        ]
+          "Change color theme",
+        ],
       };
       setMessages([welcomeMessage]);
     }
@@ -102,7 +103,7 @@ export function BuilderChatbotSidebar({
 
   // Auto-scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = async () => {
@@ -110,153 +111,185 @@ export function BuilderChatbotSidebar({
 
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
-      type: 'user',
+      type: "user",
       content: inputValue,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
     setIsTyping(true);
 
     // Simulate AI processing
     setTimeout(() => {
       const botResponse = generateBotResponse(inputValue);
-      setMessages(prev => [...prev, botResponse]);
+      setMessages((prev) => [...prev, botResponse]);
       setIsTyping(false);
     }, 1500);
   };
 
   const generateBotResponse = (userInput: string): ChatMessage => {
     const input = userInput.toLowerCase();
-    
+
     // Check for full website building requests
-    if (input.includes('fully function') || input.includes('complete website') || input.includes('build website') || input.includes('high quality')) {
+    if (
+      input.includes("fully function") ||
+      input.includes("complete website") ||
+      input.includes("build website") ||
+      input.includes("high quality")
+    ) {
       setShowAdvancedBuilder(true);
       return {
         id: `bot-${Date.now()}`,
-        type: 'bot',
-        content: "🎉 Perfect! I'll build you a complete, fully functional website with professional quality. Choose from these premium templates:",
+        type: "bot",
+        content:
+          "🎉 Perfect! I'll build you a complete, fully functional website with professional quality. Choose from these premium templates:",
         timestamp: new Date(),
         actions: [
           {
-            id: 'show-templates',
-            label: '🏆 View Premium Templates',
-            type: 'component',
+            id: "show-templates",
+            label: "🏆 View Premium Templates",
+            type: "component",
             icon: <Building2 className="h-4 w-4" />,
             action: () => {
-              toast({ 
-                title: '🎯 Premium Templates Ready!', 
-                description: 'Each template includes full functionality and professional design.' 
+              toast({
+                title: "🎯 Premium Templates Ready!",
+                description:
+                  "Each template includes full functionality and professional design.",
               });
-            }
-          }
-        ]
+            },
+          },
+        ],
       };
     }
 
     // E-commerce store requests
-    if (input.includes('ecommerce') || input.includes('store') || input.includes('shop') || input.includes('luxury')) {
+    if (
+      input.includes("ecommerce") ||
+      input.includes("store") ||
+      input.includes("shop") ||
+      input.includes("luxury")
+    ) {
       setShowAdvancedBuilder(true);
       return {
         id: `bot-${Date.now()}`,
-        type: 'bot',
-        content: "🛍️ Excellent! I'll build you a complete luxury e-commerce store with shopping cart, payment processing, user accounts, and mobile optimization.",
+        type: "bot",
+        content:
+          "🛍️ Excellent! I'll build you a complete luxury e-commerce store with shopping cart, payment processing, user accounts, and mobile optimization.",
         timestamp: new Date(),
         actions: [
           {
-            id: 'build-luxury-store',
-            label: '🏆 Build Luxury E-commerce Store',
-            type: 'component',
+            id: "build-luxury-store",
+            label: "🏆 Build Luxury E-commerce Store",
+            type: "component",
             icon: <ShoppingCart className="h-4 w-4" />,
             action: () => {
-              toast({ 
-                title: '🛍️ Building Luxury Store!', 
-                description: 'Creating complete e-commerce with all features.' 
+              toast({
+                title: "🛍️ Building Luxury Store!",
+                description: "Creating complete e-commerce with all features.",
               });
-            }
-          }
-        ]
+            },
+          },
+        ],
       };
     }
 
     // Landing page requests
-    if (input.includes('landing page') || input.includes('homepage')) {
+    if (input.includes("landing page") || input.includes("homepage")) {
       return {
         id: `bot-${Date.now()}`,
-        type: 'bot',
-        content: "Great! I'll help you create a high-converting landing page with professional structure:",
+        type: "bot",
+        content:
+          "Great! I'll help you create a high-converting landing page with professional structure:",
         timestamp: new Date(),
         actions: [
           {
-            id: 'hero-section',
-            label: 'Add Hero Section',
-            type: 'component',
+            id: "hero-section",
+            label: "Add Hero Section",
+            type: "component",
             icon: <Zap className="h-4 w-4" />,
             action: () => {
-              onComponentAdd?.('hero');
-              toast({ title: 'Hero Section Added!', description: 'Perfect start for your landing page.' });
-            }
+              onComponentAdd?.("hero");
+              toast({
+                title: "Hero Section Added!",
+                description: "Perfect start for your landing page.",
+              });
+            },
           },
           {
-            id: 'features-section',
-            label: 'Add Features Section',
-            type: 'component', 
+            id: "features-section",
+            label: "Add Features Section",
+            type: "component",
             icon: <Layout className="h-4 w-4" />,
             action: () => {
-              onComponentAdd?.('features');
-              toast({ title: 'Features Section Added!', description: 'Showcase your key benefits.' });
-            }
-          }
-        ]
+              onComponentAdd?.("features");
+              toast({
+                title: "Features Section Added!",
+                description: "Showcase your key benefits.",
+              });
+            },
+          },
+        ],
       };
     }
 
     // Style and theme requests
-    if (input.includes('color') || input.includes('theme') || input.includes('style')) {
+    if (
+      input.includes("color") ||
+      input.includes("theme") ||
+      input.includes("style")
+    ) {
       return {
         id: `bot-${Date.now()}`,
-        type: 'bot',
-        content: "I'll help you style your website! Here are professional theme options:",
+        type: "bot",
+        content:
+          "I'll help you style your website! Here are professional theme options:",
         timestamp: new Date(),
         actions: [
           {
-            id: 'modern-blue',
-            label: 'Modern Blue Theme',
-            type: 'style',
+            id: "modern-blue",
+            label: "Modern Blue Theme",
+            type: "style",
             icon: <Palette className="h-4 w-4" />,
             action: () => {
-              onStyleChange?.('theme', 'modern-blue');
-              toast({ title: 'Theme Applied!', description: 'Modern blue theme looks professional.' });
-            }
+              onStyleChange?.("theme", "modern-blue");
+              toast({
+                title: "Theme Applied!",
+                description: "Modern blue theme looks professional.",
+              });
+            },
           },
           {
-            id: 'elegant-purple',
-            label: 'Elegant Purple Theme',
-            type: 'style',
+            id: "elegant-purple",
+            label: "Elegant Purple Theme",
+            type: "style",
             icon: <Palette className="h-4 w-4" />,
             action: () => {
-              onStyleChange?.('theme', 'elegant-purple');
-              toast({ title: 'Theme Applied!', description: 'Elegant purple adds luxury feel.' });
-            }
-          }
-        ]
+              onStyleChange?.("theme", "elegant-purple");
+              toast({
+                title: "Theme Applied!",
+                description: "Elegant purple adds luxury feel.",
+              });
+            },
+          },
+        ],
       };
     }
 
     // Default helpful response
     return {
       id: `bot-${Date.now()}`,
-      type: 'bot',
-      content: "I understand you'd like help with your website. Here are some things I can do:",
+      type: "bot",
+      content:
+        "I understand you'd like help with your website. Here are some things I can do:",
       timestamp: new Date(),
       suggestions: [
         "Build complete website",
-        "Add components", 
+        "Add components",
         "Change colors and themes",
         "Create responsive layouts",
-        "Optimize for mobile"
-      ]
+        "Optimize for mobile",
+      ],
     };
   };
 
@@ -267,23 +300,23 @@ export function BuilderChatbotSidebar({
 
   const handleActionClick = (action: ChatAction) => {
     action.action();
-    
+
     // Add confirmation message
     const confirmationMessage: ChatMessage = {
       id: `bot-${Date.now()}`,
-      type: 'bot',
+      type: "bot",
       content: `✅ Done! I've ${action.label.toLowerCase()} for you. What else would you like to work on?`,
       timestamp: new Date(),
       suggestions: [
         "Build complete website",
         "Add more components",
         "Adjust styling",
-        "Preview changes"
-      ]
+        "Preview changes",
+      ],
     };
-    
+
     setTimeout(() => {
-      setMessages(prev => [...prev, confirmationMessage]);
+      setMessages((prev) => [...prev, confirmationMessage]);
     }, 500);
   };
 
@@ -298,7 +331,7 @@ export function BuilderChatbotSidebar({
           <div>
             <h3 className="font-semibold">AI Website Builder</h3>
             <p className="text-xs text-muted-foreground">
-              {isTyping ? 'Thinking...' : 'Ready to build'}
+              {isTyping ? "Thinking..." : "Ready to build"}
             </p>
           </div>
         </div>
@@ -310,9 +343,9 @@ export function BuilderChatbotSidebar({
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-medium text-sm">🚀 AI Website Builder</h4>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowAdvancedBuilder(false)}
                 className="h-6 w-6 p-0"
               >
@@ -320,18 +353,19 @@ export function BuilderChatbotSidebar({
               </Button>
             </div>
             <div className="max-h-96 overflow-auto">
-              <AdvancedWebsiteBuilder 
+              <AdvancedWebsiteBuilder
                 onBuildComplete={(website) => {
                   toast({
-                    title: '🎉 Website Built Successfully!',
-                    description: `Your ${website.name} is live with all professional features!`
+                    title: "🎉 Website Built Successfully!",
+                    description: `Your ${website.name} is live with all professional features!`,
                   });
                   setShowAdvancedBuilder(false);
                 }}
                 onBuildStart={() => {
                   toast({
-                    title: '🔨 Building Your Website...',
-                    description: 'AI is creating your professional website now!'
+                    title: "🔨 Building Your Website...",
+                    description:
+                      "AI is creating your professional website now!",
                   });
                 }}
               />
@@ -352,7 +386,7 @@ export function BuilderChatbotSidebar({
               onActionClick={handleActionClick}
             />
           ))}
-          
+
           {isTyping && <TypingIndicator />}
           <div ref={messagesEndRef} />
         </div>
@@ -366,7 +400,7 @@ export function BuilderChatbotSidebar({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Ask me to build anything..."
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
             className="flex-1"
           />
           <Button
@@ -377,10 +411,12 @@ export function BuilderChatbotSidebar({
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        
+
         <div className="flex items-center mt-2 text-xs text-muted-foreground">
           <Lightbulb className="h-3 w-3 mr-1" />
-          <span>Try: "Build luxury e-commerce store" or "Add hero section"</span>
+          <span>
+            Try: "Build luxury e-commerce store" or "Add hero section"
+          </span>
         </div>
       </div>
     </div>
@@ -391,7 +427,7 @@ export function BuilderChatbotSidebar({
 function ChatMessageComponent({
   message,
   onSuggestionClick,
-  onActionClick
+  onActionClick,
 }: {
   message: ChatMessage;
   onSuggestionClick: (suggestion: string) => void;
@@ -406,21 +442,33 @@ function ChatMessageComponent({
   };
 
   return (
-    <div className={`flex gap-3 ${message.type === 'user' ? 'flex-row-reverse' : ''}`}>
-      <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-        message.type === 'user' 
-          ? 'bg-primary text-primary-foreground' 
-          : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-      }`}>
-        {message.type === 'user' ? <User className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
+    <div
+      className={`flex gap-3 ${message.type === "user" ? "flex-row-reverse" : ""}`}
+    >
+      <div
+        className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+          message.type === "user"
+            ? "bg-primary text-primary-foreground"
+            : "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+        }`}
+      >
+        {message.type === "user" ? (
+          <User className="h-3 w-3" />
+        ) : (
+          <Bot className="h-3 w-3" />
+        )}
       </div>
 
-      <div className={`flex-1 space-y-2 ${message.type === 'user' ? 'items-end' : ''}`}>
-        <div className={`max-w-[260px] p-3 rounded-lg text-sm ${
-          message.type === 'user'
-            ? 'bg-primary text-primary-foreground ml-auto'
-            : 'bg-muted'
-        }`}>
+      <div
+        className={`flex-1 space-y-2 ${message.type === "user" ? "items-end" : ""}`}
+      >
+        <div
+          className={`max-w-[260px] p-3 rounded-lg text-sm ${
+            message.type === "user"
+              ? "bg-primary text-primary-foreground ml-auto"
+              : "bg-muted"
+          }`}
+        >
           <p>{message.content}</p>
         </div>
 
@@ -463,7 +511,10 @@ function ChatMessageComponent({
         )}
 
         <p className="text-xs text-muted-foreground">
-          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {message.timestamp.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </p>
       </div>
     </div>
@@ -479,9 +530,18 @@ function TypingIndicator() {
       </div>
       <div className="bg-muted p-3 rounded-lg">
         <div className="flex space-x-1">
-          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <div
+            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+            style={{ animationDelay: "0ms" }}
+          />
+          <div
+            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+            style={{ animationDelay: "150ms" }}
+          />
+          <div
+            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+            style={{ animationDelay: "300ms" }}
+          />
         </div>
       </div>
     </div>
