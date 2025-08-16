@@ -861,6 +861,16 @@ function BuilderTemplateManager({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const { toast } = useToast();
+  const testToast = React.useCallback(() => {
+    if (typeof toast === 'function') {
+      return toast;
+    } else {
+      console.error('Toast function not available');
+      return () => {};
+    }
+  }, [toast]);
+
   const categories = ['All', ...Array.from(new Set(templates.map(t => t.category)))];
 
   const filteredTemplates = templates.filter(template => {
