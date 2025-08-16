@@ -28,6 +28,7 @@ import { SSLManagement } from './SSLManagement';
 import { DeploymentManagement } from './DeploymentManagement';
 import { HostingSettings } from './HostingSettings';
 import { DomainProviders } from './DomainProviders';
+import { DomainStoreConnection } from './DomainStoreConnection';
 
 export function DomainDashboard() {
   const { domains } = useDomain();
