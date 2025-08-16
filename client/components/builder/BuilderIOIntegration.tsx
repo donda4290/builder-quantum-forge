@@ -200,7 +200,7 @@ export function BuilderIOIntegration() {
           : page
       ));
       
-      toast({
+      testToast()({
         title: 'Page Published!',
         description: 'Your page is now live and accessible to visitors.'
       });
