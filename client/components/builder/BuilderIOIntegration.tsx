@@ -164,7 +164,7 @@ export function BuilderIOIntegration() {
         description: 'Your new page is ready for editing in Builder.io.'
       });
     } catch (error) {
-      toast({
+      testToast()({
         title: 'Creation Failed',
         description: 'Could not create new page. Please try again.',
         variant: 'destructive'
