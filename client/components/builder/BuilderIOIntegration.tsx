@@ -205,7 +205,7 @@ export function BuilderIOIntegration() {
         description: 'Your page is now live and accessible to visitors.'
       });
     } catch (error) {
-      toast({
+      testToast()({
         title: 'Publish Failed',
         description: 'Could not publish page. Please try again.',
         variant: 'destructive'
