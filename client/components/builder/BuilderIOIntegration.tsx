@@ -525,20 +525,15 @@ function BuilderVisualEditor({
                 </div>
               </div>
               
-              {/* Builder.io Editor Iframe Placeholder */}
-              <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950">
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                    <ExternalLink className="w-8 h-8 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg">Builder.io Visual Editor</h4>
-                    <p className="text-muted-foreground">Click "Open in Builder.io" to start editing</p>
-                  </div>
-                  <Button onClick={() => onOpenEditor(selectedPage)}>
-                    Launch Editor
-                  </Button>
-                </div>
+              {/* Active Builder.io Visual Editor */}
+              <div className="flex-1 bg-white dark:bg-gray-900 relative overflow-hidden">
+                <ActiveBuilderEditor
+                  page={selectedPage}
+                  onSave={(content) => {
+                    // Handle save functionality
+                    console.log('Saving content:', content);
+                  }}
+                />
               </div>
             </div>
           ) : (
