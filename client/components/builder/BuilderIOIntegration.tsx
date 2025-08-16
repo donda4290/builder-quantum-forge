@@ -88,6 +88,17 @@ const mockBuilderPages: BuilderPage[] = [
 
 export function BuilderIOIntegration() {
   const { toast } = useToast();
+
+  // Test toast function availability
+  const testToast = React.useCallback(() => {
+    if (typeof toast === 'function') {
+      return toast;
+    } else {
+      console.error('Toast function not available');
+      return () => {};
+    }
+  }, [toast]);
+
   const [config, setConfig] = useState<BuilderIOConfig>(mockBuilderConfig);
   const [pages, setPages] = useState<BuilderPage[]>(mockBuilderPages);
   const [selectedPage, setSelectedPage] = useState<BuilderPage | null>(null);
