@@ -846,6 +846,184 @@ function BuilderModelsManager({ config }: { config: BuilderIOConfig }) {
   );
 }
 
+// Template Manager Component
+function BuilderTemplateManager({
+  templates,
+  onImportTemplate,
+  onCreateFromTemplate,
+  isLoading
+}: {
+  templates: BuilderTemplate[];
+  onImportTemplate: (templateId: string) => void;
+  onCreateFromTemplate: (template: BuilderTemplate) => void;
+  isLoading: boolean;
+}) {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const categories = ['All', ...Array.from(new Set(templates.map(t => t.category)))];
+
+  const filteredTemplates = templates.filter(template => {
+    const matchesCategory = selectedCategory === 'All' || template.category === selectedCategory;
+    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-semibold">Template Library</h3>
+          <p className="text-muted-foreground">Import templates from your Builder.io space</p>
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <Input
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-64"
+          />
+
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-3 py-2 border rounded-md bg-background"
+          >
+            {categories.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredTemplates.map((template) => (
+          <Card key={template.id} className="group overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 relative overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center space-y-2">
+                  <Layout className="w-12 h-12 mx-auto text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Template Preview</p>
+                </div>
+              </div>
+
+              {template.isImported && (
+                <div className="absolute top-2 right-2">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Imported
+                  </Badge>
+                </div>
+              )}
+
+              <div className="absolute top-2 left-2">
+                <Badge variant="outline">{template.category}</Badge>
+              </div>
+            </div>
+
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div>
+                  <h4 className="font-semibold text-base">{template.name}</h4>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{template.description}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-1">
+                  {template.tags.slice(0, 3).map(tag => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {template.tags.length > 3 && (
+                    <span className="text-xs text-muted-foreground">+{template.tags.length - 3}</span>
+                  )}
+                </div>
+
+                <div className="text-xs text-muted-foreground">
+                  Modified: {template.lastModified.toLocaleDateString()}
+                </div>
+
+                <div className="flex items-center space-x-2 pt-2">
+                  {!template.isImported ? (
+                    <Button
+                      size="sm"
+                      onClick={() => onImportTemplate(template.id)}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Import className="h-4 w-4 mr-2" />
+                      )}
+                      Import
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onCreateFromTemplate(template)}
+                      className="flex-1"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Use Template
+                    </Button>
+                  )}
+
+                  <Button size="sm" variant="outline">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {filteredTemplates.length === 0 && (
+        <div className="text-center py-12">
+          <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+          <h4 className="text-lg font-semibold mb-2">No Templates Found</h4>
+          <p className="text-muted-foreground">
+            {searchQuery || selectedCategory !== 'All'
+              ? 'Try adjusting your search or filter criteria.'
+              : 'Connect to your Builder.io space to see your templates.'}
+          </p>
+        </div>
+      )}
+
+      <div className="mt-8 p-6 bg-muted rounded-lg">
+        <div className="flex items-start space-x-4">
+          <Package className="w-6 h-6 text-primary mt-1" />
+          <div className="space-y-2">
+            <h4 className="font-semibold">About Template Import</h4>
+            <p className="text-sm text-muted-foreground">
+              Templates are imported from your Builder.io space and can be used to create new pages quickly.
+              Once imported, you can customize them using the visual editor and manage them through this platform.
+            </p>
+            <div className="flex items-center space-x-4 mt-3">
+              <div className="flex items-center text-sm text-muted-foreground">
+                <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
+                {templates.filter(t => t.isImported).length} Imported
+              </div>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Package className="w-4 h-4 mr-1 text-blue-600" />
+                {templates.length} Available
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Analytics Component
 function BuilderAnalytics({ config }: { config: BuilderIOConfig }) {
   const analytics = {
