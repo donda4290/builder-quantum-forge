@@ -27,7 +27,13 @@ import {
   Database,
   Upload,
   Download,
-  Share2
+  Share2,
+  FolderOpen,
+  Package,
+  Import,
+  Copy,
+  FileText,
+  Layout
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ActiveBuilderEditor } from './ActiveVisualEditor';
@@ -47,6 +53,18 @@ interface BuilderPage {
   published: boolean;
   lastModified: Date;
   model: string;
+}
+
+interface BuilderTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  previewUrl: string;
+  model: string;
+  isImported: boolean;
+  lastModified: Date;
+  tags: string[];
 }
 
 // Mock Builder.io configuration for demonstration
@@ -69,7 +87,7 @@ const mockBuilderPages: BuilderPage[] = [
     model: 'page'
   },
   {
-    id: 'products-page', 
+    id: 'products-page',
     name: 'Products Page',
     url: '/products',
     published: false,
@@ -78,11 +96,81 @@ const mockBuilderPages: BuilderPage[] = [
   },
   {
     id: 'about-page',
-    name: 'About Page', 
+    name: 'About Page',
     url: '/about',
     published: true,
     lastModified: new Date('2024-01-10'),
     model: 'page'
+  }
+];
+
+// Mock Builder.io templates from your space
+const mockBuilderTemplates: BuilderTemplate[] = [
+  {
+    id: 'ecommerce-hero-template',
+    name: 'E-commerce Hero Section',
+    description: 'Modern hero section with product showcase and call-to-action',
+    category: 'E-commerce',
+    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
+    model: 'page',
+    isImported: false,
+    lastModified: new Date('2024-01-20'),
+    tags: ['hero', 'ecommerce', 'cta']
+  },
+  {
+    id: 'landing-page-template',
+    name: 'SaaS Landing Page',
+    description: 'Complete landing page template with pricing and features',
+    category: 'Landing Pages',
+    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
+    model: 'landing-page',
+    isImported: true,
+    lastModified: new Date('2024-01-18'),
+    tags: ['saas', 'landing', 'pricing']
+  },
+  {
+    id: 'blog-layout-template',
+    name: 'Modern Blog Layout',
+    description: 'Clean blog post layout with sidebar and related articles',
+    category: 'Blog',
+    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
+    model: 'blog-post',
+    isImported: false,
+    lastModified: new Date('2024-01-16'),
+    tags: ['blog', 'article', 'content']
+  },
+  {
+    id: 'product-showcase-template',
+    name: 'Product Showcase',
+    description: 'Product gallery with zoom functionality and purchase options',
+    category: 'E-commerce',
+    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
+    model: 'product',
+    isImported: true,
+    lastModified: new Date('2024-01-14'),
+    tags: ['product', 'gallery', 'showcase']
+  },
+  {
+    id: 'contact-form-template',
+    name: 'Contact & Support Form',
+    description: 'Multi-step contact form with file upload and department routing',
+    category: 'Forms',
+    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
+    model: 'page',
+    isImported: false,
+    lastModified: new Date('2024-01-12'),
+    tags: ['contact', 'form', 'support']
+  },
+  {
+    id: 'pricing-table-template',
+    name: 'Pricing Tables',
+    description: 'Responsive pricing tables with feature comparison',
+    category: 'Pricing',
+    previewUrl: 'https://cdn.builder.io/api/v1/image/assets%2F...',
+    model: 'page',
+    isImported: false,
+    lastModified: new Date('2024-01-10'),
+    tags: ['pricing', 'comparison', 'features']
   }
 ];
 
@@ -101,10 +189,11 @@ export function BuilderIOIntegration() {
 
   const [config, setConfig] = useState<BuilderIOConfig>(mockBuilderConfig);
   const [pages, setPages] = useState<BuilderPage[]>(mockBuilderPages);
+  const [templates, setTemplates] = useState<BuilderTemplate[]>(mockBuilderTemplates);
   const [selectedPage, setSelectedPage] = useState<BuilderPage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfigDialog, setShowConfigDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState('editor');
+  const [activeTab, setActiveTab] = useState('templates');
   
   // Configuration form state
   const [formConfig, setFormConfig] = useState({
@@ -251,9 +340,28 @@ export function BuilderIOIntegration() {
                 New Page
               </Button>
               
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Sync Content
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setIsLoading(true);
+                  // Simulate syncing templates from Builder.io space
+                  setTimeout(() => {
+                    setIsLoading(false);
+                    testToast()({
+                      title: 'Templates Synced!',
+                      description: 'Latest templates imported from your Builder.io space.'
+                    });
+                  }, 2000);
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                Sync Templates
               </Button>
             </>
           )}
@@ -290,7 +398,8 @@ export function BuilderIOIntegration() {
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
             <div className="border-b px-4">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="templates">Templates</TabsTrigger>
                 <TabsTrigger value="editor">Visual Editor</TabsTrigger>
                 <TabsTrigger value="pages">Pages</TabsTrigger>
                 <TabsTrigger value="models">Models</TabsTrigger>
@@ -299,6 +408,44 @@ export function BuilderIOIntegration() {
             </div>
 
             <div className="flex-1 overflow-auto">
+              <TabsContent value="templates" className="m-0 p-4">
+                <BuilderTemplateManager
+                  templates={templates}
+                  onImportTemplate={(templateId) => {
+                    setIsLoading(true);
+                    // Simulate template import
+                    setTimeout(() => {
+                      setTemplates(prev => prev.map(t =>
+                        t.id === templateId ? { ...t, isImported: true } : t
+                      ));
+                      setIsLoading(false);
+                      testToast()({
+                        title: 'Template Imported!',
+                        description: 'Template is now available in your page manager.'
+                      });
+                    }, 1500);
+                  }}
+                  onCreateFromTemplate={(template) => {
+                    const newPage: BuilderPage = {
+                      id: `page-from-${template.id}-${Date.now()}`,
+                      name: `${template.name} Copy`,
+                      url: `/${template.name.toLowerCase().replace(/\s+/g, '-')}`,
+                      published: false,
+                      lastModified: new Date(),
+                      model: template.model
+                    };
+                    setPages(prev => [...prev, newPage]);
+                    setSelectedPage(newPage);
+                    setActiveTab('editor');
+                    testToast()({
+                      title: 'Page Created from Template!',
+                      description: `Created ${newPage.name} based on ${template.name}.`
+                    });
+                  }}
+                  isLoading={isLoading}
+                />
+              </TabsContent>
+
               <TabsContent value="editor" className="h-full m-0">
                 <BuilderVisualEditor 
                   selectedPage={selectedPage}
