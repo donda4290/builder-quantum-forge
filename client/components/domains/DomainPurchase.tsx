@@ -430,6 +430,186 @@ export function DomainPurchase() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Provider Setup Dialog */}
+      <Dialog open={showProviderSetup} onOpenChange={setShowProviderSetup}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Setup {getRegistrarInfo(setupProvider).name}</DialogTitle>
+            <DialogDescription>
+              Configure your API credentials to enable domain purchasing
+            </DialogDescription>
+          </DialogHeader>
+          <ProviderSetupForm
+            provider={setupProvider}
+            onComplete={() => {
+              setShowProviderSetup(false);
+              toast({
+                title: 'Provider Configured',
+                description: `${getRegistrarInfo(setupProvider).name} is now ready for domain purchases.`
+              });
+            }}
+            onCancel={() => setShowProviderSetup(false)}
+          />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// Provider Setup Form Component
+interface ProviderSetupFormProps {
+  provider: string;
+  onComplete: () => void;
+  onCancel: () => void;
+}
+
+function ProviderSetupForm({ provider, onComplete, onCancel }: ProviderSetupFormProps) {
+  const { updateProvider } = useDomain();
+  const [apiKey, setApiKey] = useState('');
+  const [apiSecret, setApiSecret] = useState('');
+  const [testMode, setTestMode] = useState(true);
+  const [isValidating, setIsValidating] = useState(false);
+
+  const handleSave = async () => {
+    if (!apiKey || !apiSecret) return;
+
+    setIsValidating(true);
+    try {
+      // Simulate API validation
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      updateProvider(provider, {
+        apiKey,
+        apiSecret,
+        testMode,
+        enabled: true
+      });
+
+      onComplete();
+    } catch (error) {
+      console.error('Provider validation failed:', error);
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const getProviderInstructions = (provider: string) => {
+    const instructions = {
+      'godaddy': {
+        title: 'GoDaddy API Setup',
+        steps: [
+          'Log into your GoDaddy Developer Account',
+          'Go to API Keys section',
+          'Create a new API Key/Secret pair',
+          'Copy the Key and Secret below'
+        ],
+        link: 'https://developer.godaddy.com/keys'
+      },
+      'namecheap': {
+        title: 'Namecheap API Setup',
+        steps: [
+          'Log into your Namecheap account',
+          'Go to Profile > Tools > Namecheap API Access',
+          'Enable API access and whitelist your IP',
+          'Use your username as API key'
+        ],
+        link: 'https://www.namecheap.com/support/api/intro/'
+      },
+      'cloudflare': {
+        title: 'Cloudflare API Setup',
+        steps: [
+          'Log into your Cloudflare account',
+          'Go to My Profile > API Tokens',
+          'Create a token with Zone:Edit permissions',
+          'Copy the token as your API key'
+        ],
+        link: 'https://developers.cloudflare.com/api/tokens/'
+      }
+    };
+
+    return instructions[provider as keyof typeof instructions] || instructions.godaddy;
+  };
+
+  const providerInfo = getProviderInstructions(provider);
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+        <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+          {providerInfo.title}
+        </h4>
+        <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          {providerInfo.steps.map((step, index) => (
+            <li key={index}>{index + 1}. {step}</li>
+          ))}
+        </ol>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          onClick={() => window.open(providerInfo.link, '_blank')}
+        >
+          <ExternalLink className="h-3 w-3 mr-1" />
+          Open {provider} Dashboard
+        </Button>
+      </div>
+
+      <div className="space-y-3">
+        <div>
+          <Label htmlFor="apiKey">API Key</Label>
+          <Input
+            id="apiKey"
+            type="password"
+            placeholder="Enter your API key"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="apiSecret">API Secret</Label>
+          <Input
+            id="apiSecret"
+            type="password"
+            placeholder="Enter your API secret"
+            value={apiSecret}
+            onChange={(e) => setApiSecret(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="testMode"
+            checked={testMode}
+            onChange={(e) => setTestMode(e.target.checked)}
+            className="rounded"
+          />
+          <Label htmlFor="testMode" className="text-sm">
+            Enable test mode (recommended for initial setup)
+          </Label>
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-2">
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          disabled={!apiKey || !apiSecret || isValidating}
+        >
+          {isValidating ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Validating...
+            </>
+          ) : (
+            'Save & Enable'
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
