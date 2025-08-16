@@ -131,7 +131,7 @@ export function BuilderIOIntegration() {
         description: 'Your Builder.io integration is now active and ready to use.'
       });
     } catch (error) {
-      toast({
+      testToast()({
         title: 'Configuration Failed',
         description: 'Please check your API credentials and try again.',
         variant: 'destructive'
