@@ -15,6 +15,7 @@ import {
   Code
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { BuilderChatbot } from './BuilderChatbot';
 
 interface BuilderPage {
   id: string;
