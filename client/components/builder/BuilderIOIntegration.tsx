@@ -1252,7 +1252,7 @@ function BuilderSpaceExplorer({
               {isConnectedToRealSpace && (
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Package className="w-4 h-4 mr-1 text-green-600" />
-                  {spaceContents.length} Items
+                  {safeSpaceContents.length} Items
                 </div>
               )}
             </div>
