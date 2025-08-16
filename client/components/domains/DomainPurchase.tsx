@@ -32,7 +32,8 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 export function DomainPurchase() {
-  const { searchDomains, purchaseDomain, domainProviders } = useDomain();
+  const { searchDomains, purchaseDomain, domainProviders, updateProvider } = useDomain();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
   const [isSearching, setIsSearching] = useState(false);
