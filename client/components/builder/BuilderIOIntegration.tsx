@@ -180,7 +180,7 @@ export function BuilderIOIntegration() {
     setActiveTab('editor');
 
     // For demonstration, we'll simulate the full Builder.io editor experience
-    toast({
+    testToast()({
       title: 'Builder.io Editor Activated!',
       description: `Now editing ${page.name} with full visual editor capabilities.`
     });
