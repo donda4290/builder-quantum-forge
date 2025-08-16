@@ -247,9 +247,9 @@ export function AuditLogs() {
     ...new Set(auditLogs.map((log) => log.action.split(".")[1] || log.action)),
   ];
   const uniqueUsers = [
-    ...new Set(
-      auditLogs.map((log) => ({ id: log.userId, email: log.userEmail })),
-    ),
+    ...new Map(
+      auditLogs.map((log) => [log.userId, { id: log.userId, email: log.userEmail }])
+    ).values(),
   ];
 
   const handleUpdateSetting = (settingId: string, newValue: any) => {
