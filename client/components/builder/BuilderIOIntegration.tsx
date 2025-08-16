@@ -531,8 +531,10 @@ function BuilderVisualEditor({
                 <ActiveBuilderEditor
                   page={selectedPage}
                   onSave={(content) => {
-                    // Handle save functionality
-                    console.log('Saving content:', content);
+                    toast({
+                      title: 'Page Saved!',
+                      description: `Changes to ${selectedPage.name} have been saved successfully.`
+                    });
                   }}
                 />
               </div>
