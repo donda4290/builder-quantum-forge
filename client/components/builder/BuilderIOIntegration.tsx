@@ -273,9 +273,9 @@ export function BuilderIOIntegration() {
       let data = null;
       let errorDetails = '';
 
-      // Method 1: Try the v3 content API
+      // Method 1: Try the correct v1 content API (v3 doesn't exist)
       try {
-        const response = await fetch(`https://cdn.builder.io/api/v3/content?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true&cachebust=true`, {
+        const response = await fetch(`https://cdn.builder.io/api/v1/query/${config.spaceId}/page?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -284,19 +284,20 @@ export function BuilderIOIntegration() {
         });
 
         if (response.ok) {
-          data = await response.json();
+          const responseData = await response.json();
+          data = { results: responseData };
         } else {
           errorDetails = `API returned ${response.status}: ${response.statusText}`;
         }
       } catch (corsError) {
-        console.warn('CORS error with v3 API:', corsError);
+        console.warn('CORS error with v1 API:', corsError);
         errorDetails = 'CORS blocked - trying alternative method';
       }
 
-      // Method 2: Try the legacy v1 API if v3 failed
-      if (!data) {
+      // Method 2: Try different model types if page model failed
+      if (!data && !errorDetails.includes('401') && !errorDetails.includes('403')) {
         try {
-          const legacyResponse = await fetch(`https://cdn.builder.io/api/v1/query/${config.spaceId}/page?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true&format=amp`, {
+          const allContentResponse = await fetch(`https://cdn.builder.io/api/v1/query/${config.spaceId}?apiKey=${config.publicApiKey}&limit=100&includeUnpublished=true`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -304,15 +305,15 @@ export function BuilderIOIntegration() {
             mode: 'cors'
           });
 
-          if (legacyResponse.ok) {
-            const legacyData = await legacyResponse.json();
-            data = { results: legacyData };
+          if (allContentResponse.ok) {
+            const allContentData = await allContentResponse.json();
+            data = { results: allContentData };
           } else {
-            errorDetails += ` | Legacy API: ${legacyResponse.status}`;
+            errorDetails += ` | All content API: ${allContentResponse.status}`;
           }
-        } catch (legacyError) {
-          console.warn('Legacy API also failed:', legacyError);
-          errorDetails += ' | Legacy API also blocked';
+        } catch (allContentError) {
+          console.warn('All content API also failed:', allContentError);
+          errorDetails += ' | All content API also blocked';
         }
       }
 
