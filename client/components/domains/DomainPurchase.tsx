@@ -372,7 +372,7 @@ export function DomainPurchase() {
                 )}
               </Button>
               {!domainProviders.find(p => p.name === selectedRegistrar)?.enabled && (
-                <Button variant="outline" onClick={() => {}}>
+                <Button variant="outline" onClick={() => handleSetupProvider(selectedRegistrar)}>
                   Setup {getRegistrarInfo(selectedRegistrar).name}
                 </Button>
               )}
