@@ -235,6 +235,16 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
           )}
         </div>
       </div>
+
+      {/* AI Chatbot */}
+      <BuilderChatbot
+        isOpen={isChatbotOpen}
+        onToggle={() => setIsChatbotOpen(!isChatbotOpen)}
+        onComponentAdd={handleComponentAdd}
+        onStyleChange={handleStyleChange}
+        onLayoutSuggestion={handleLayoutSuggestion}
+        currentPage={page}
+      />
     </div>
   );
 }
