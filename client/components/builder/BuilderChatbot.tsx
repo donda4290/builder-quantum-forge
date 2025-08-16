@@ -213,43 +213,32 @@ export function BuilderChatbot({
       };
     }
 
-    if (input.includes('ecommerce') || input.includes('store') || input.includes('shop')) {
+    if (input.includes('ecommerce') || input.includes('store') || input.includes('shop') || input.includes('luxury')) {
+      setShowAdvancedBuilder(true);
       return {
         id: `bot-${Date.now()}`,
         type: 'bot',
-        content: "Perfect! Let's build an e-commerce website that sells. I'll set up the essential components for online selling:",
+        content: "🛍️ Excellent! I'll build you a complete luxury e-commerce store with shopping cart, payment processing, user accounts, and mobile optimization. This will be a fully functional online store!",
         timestamp: new Date(),
         actions: [
           {
-            id: 'product-grid',
-            label: 'Add Product Grid',
+            id: 'build-luxury-store',
+            label: '🏆 Build Luxury E-commerce Store',
             type: 'component',
-            icon: <Layout className="h-4 w-4" />,
+            icon: <ShoppingCart className="h-4 w-4" />,
             action: () => {
-              onComponentAdd?.('product-grid');
-              toast({ title: 'Product Grid Added!', description: 'Showcase your products beautifully.' });
-            }
-          },
-          {
-            id: 'shopping-cart',
-            label: 'Add Shopping Cart',
-            type: 'component',
-            icon: <Settings className="h-4 w-4" />,
-            action: () => {
-              onComponentAdd?.('cart');
-              toast({ title: 'Shopping Cart Added!', description: 'Enable customers to purchase easily.' });
-            }
-          },
-          {
-            id: 'product-search',
-            label: 'Add Search Bar',
-            type: 'component',
-            icon: <Settings className="h-4 w-4" />,
-            action: () => {
-              onComponentAdd?.('search');
-              toast({ title: 'Search Added!', description: 'Help customers find products quickly.' });
+              toast({
+                title: '🛍️ Building Luxury Store!',
+                description: 'Creating complete e-commerce with all features.'
+              });
             }
           }
+        ],
+        suggestions: [
+          "Add product catalog",
+          "Setup payment processing",
+          "Create user accounts",
+          "Mobile optimization"
         ]
       };
     }
