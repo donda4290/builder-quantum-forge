@@ -461,6 +461,27 @@ export function BuilderChatbot({
           {/* Messages Area */}
           <ScrollArea className="flex-1 p-4">
             <div className="space-y-4">
+              {showAdvancedBuilder && (
+                <div className="border rounded-lg p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950">
+                  <h3 className="font-semibold mb-3 text-center">🚀 AI Website Builder</h3>
+                  <AdvancedWebsiteBuilder
+                    onBuildComplete={(website) => {
+                      toast({
+                        title: '🎉 Website Built Successfully!',
+                        description: `Your ${website.name} is live with all professional features!`
+                      });
+                      setShowAdvancedBuilder(false);
+                    }}
+                    onBuildStart={() => {
+                      toast({
+                        title: '🔨 Building Your Website...',
+                        description: 'AI is creating your professional website now!'
+                      });
+                    }}
+                  />
+                </div>
+              )}
+
               {messages.map((message) => (
                 <ChatMessageComponent
                   key={message.id}
@@ -469,7 +490,7 @@ export function BuilderChatbot({
                   onActionClick={handleActionClick}
                 />
               ))}
-              
+
               {isTyping && <TypingIndicator />}
               <div ref={messagesEndRef} />
             </div>
