@@ -327,6 +327,10 @@ export function DomainDashboard() {
             <DomainPurchase />
           </TabsContent>
 
+          <TabsContent value="stores" className="mt-6">
+            <DomainStoreConnection />
+          </TabsContent>
+
           <TabsContent value="domains" className="mt-6">
             <DomainManagement />
           </TabsContent>
