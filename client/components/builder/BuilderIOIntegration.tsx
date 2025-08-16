@@ -1062,13 +1062,17 @@ function BuilderSpaceExplorer({
     }
   }, [toast]);
 
+  // Ensure spaceContents is always an array
+  const safeSpaceContents = Array.isArray(spaceContents) ? spaceContents : [];
+  const safeMockTemplates = Array.isArray(mockTemplates) ? mockTemplates : [];
+
   // Use real space contents if connected, otherwise show mock templates
-  const displayContents = isConnectedToRealSpace ? spaceContents : mockTemplates;
+  const displayContents = isConnectedToRealSpace ? safeSpaceContents : safeMockTemplates;
 
   // Get unique models/types from the content
   const models = isConnectedToRealSpace
-    ? ['All', ...Array.from(new Set(spaceContents.map(c => c.modelName || 'page')))]
-    : ['All', ...Array.from(new Set(mockTemplates.map(t => t.category)))];
+    ? ['All', ...Array.from(new Set(safeSpaceContents.map(c => c.modelName || 'page')))]
+    : ['All', ...Array.from(new Set(safeMockTemplates.map(t => t.category)))];
 
   const filteredContents = displayContents.filter(content => {
     const modelName = isConnectedToRealSpace ? (content.modelName || 'page') : content.category;
