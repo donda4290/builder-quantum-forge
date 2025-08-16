@@ -241,26 +241,26 @@ const mockProviders: DomainProvider[] = [
   {
     id: 'godaddy',
     name: 'godaddy',
-    apiKey: '',
-    apiSecret: '',
+    apiKey: 'demo_key_godaddy',
+    apiSecret: 'demo_secret_godaddy',
     testMode: true,
-    enabled: false
+    enabled: true // Enabled for demo purposes
   },
   {
     id: 'namecheap',
     name: 'namecheap',
-    apiKey: '',
-    apiSecret: '',
+    apiKey: 'demo_key_namecheap',
+    apiSecret: 'demo_secret_namecheap',
     testMode: true,
-    enabled: false
+    enabled: true // Enabled for demo purposes
   },
   {
     id: 'cloudflare',
     name: 'cloudflare',
-    apiKey: '',
-    apiSecret: '',
+    apiKey: 'demo_key_cloudflare',
+    apiSecret: 'demo_secret_cloudflare',
     testMode: true,
-    enabled: false
+    enabled: true // Enabled for demo purposes
   }
 ];
 
