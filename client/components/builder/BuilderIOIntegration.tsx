@@ -1112,7 +1112,7 @@ function BuilderSpaceExplorer({
           </h3>
           <p className="text-muted-foreground">
             {isConnectedToRealSpace
-              ? `${spaceContents.length} items found in space: ${config.spaceId}`
+              ? `${safeSpaceContents.length} items found in space: ${config.spaceId}`
               : 'Click "Load My Space" to connect to your real Builder.io content'}
           </p>
         </div>
