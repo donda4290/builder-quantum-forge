@@ -61,7 +61,7 @@ export function DomainPurchase() {
 
   const handlePurchase = async () => {
     if (!selectedDomain || !selectedRegistrar) return;
-    
+
     setIsPurchasing(true);
     try {
       await purchaseDomain(selectedDomain, selectedRegistrar, registrationYears);
@@ -69,11 +69,27 @@ export function DomainPurchase() {
       setSelectedDomain('');
       setSearchResults([]);
       setSearchQuery('');
+
+      // Show success toast
+      toast({
+        title: 'Domain Purchased Successfully!',
+        description: `${selectedDomain} has been registered and is being configured.`
+      });
     } catch (error) {
       console.error('Domain purchase failed:', error);
+      toast({
+        title: 'Purchase Failed',
+        description: 'Failed to purchase domain. Please check your payment method and try again.',
+        variant: 'destructive'
+      });
     } finally {
       setIsPurchasing(false);
     }
+  };
+
+  const handleSetupProvider = (provider: string) => {
+    setSetupProvider(provider);
+    setShowProviderSetup(true);
   };
 
   const getDomainPrice = (domain: string, registrar: string) => {
