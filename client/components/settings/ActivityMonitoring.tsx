@@ -510,7 +510,7 @@ export function ActivityMonitoring() {
                       <SelectValue placeholder="All users" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All users</SelectItem>
+                      <SelectItem value="all">All users</SelectItem>
                       {teamMembers.map(member => (
                         <SelectItem key={member.id} value={member.id}>
                           {member.firstName} {member.lastName}
@@ -526,7 +526,7 @@ export function ActivityMonitoring() {
                       <SelectValue placeholder="All actions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All actions</SelectItem>
+                      <SelectItem value="all">All actions</SelectItem>
                       {uniqueActions.map(action => (
                         <SelectItem key={action} value={action}>{action}</SelectItem>
                       ))}
