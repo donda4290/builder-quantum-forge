@@ -180,16 +180,14 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setIsChatbotOpen(!isChatbotOpen)}
-              className={isChatbotOpen ? "bg-primary/10 border-primary" : ""}
+              onClick={() => setChatbotCollapsed(!chatbotCollapsed)}
+              className={!chatbotCollapsed ? "bg-primary/10 border-primary" : ""}
             >
               <div className="relative">
                 🤖
-                {!isChatbotOpen && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                )}
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               </div>
-              <span className="ml-2">AI Assistant</span>
+              <span className="ml-2">{chatbotCollapsed ? 'Show' : 'Hide'} AI Assistant</span>
             </Button>
           </div>
         </div>
