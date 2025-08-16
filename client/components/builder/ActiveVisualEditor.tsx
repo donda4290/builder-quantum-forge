@@ -145,6 +145,11 @@ export function ActiveBuilderEditor({ page, onSave }: ActiveBuilderEditorProps) 
             </Badge>
             <span className="text-sm text-muted-foreground">|</span>
             <span className="text-sm font-medium">{page.name}</span>
+            {!chatbotCollapsed && (
+              <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                🤖 AI Assistant Active
+              </Badge>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
