@@ -385,7 +385,9 @@ export function BuilderIOIntegration() {
         });
       }
 
-      setSpaceContents(data.results || []);
+      // Ensure we always set an array
+      const results = Array.isArray(data?.results) ? data.results : [];
+      setSpaceContents(results);
       setIsConnectedToRealSpace(true);
 
     } catch (error) {
