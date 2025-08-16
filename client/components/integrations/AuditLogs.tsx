@@ -248,7 +248,10 @@ export function AuditLogs() {
   ];
   const uniqueUsers = [
     ...new Map(
-      auditLogs.map((log) => [log.userId, { id: log.userId, email: log.userEmail }])
+      auditLogs.map((log) => [
+        log.userId,
+        { id: log.userId, email: log.userEmail },
+      ]),
     ).values(),
   ];
 
