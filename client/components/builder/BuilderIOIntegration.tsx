@@ -543,7 +543,8 @@ function BuilderVisualEditor({
                   page={selectedPage}
                   onSave={(content) => {
                     try {
-                      toast({
+                      const toastFn = testToast();
+                      toastFn({
                         title: 'Page Saved!',
                         description: `Changes to ${selectedPage.name} have been saved successfully.`
                       });
