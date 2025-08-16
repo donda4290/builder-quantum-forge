@@ -42,6 +42,8 @@ export function DomainPurchase() {
   const [registrationYears, setRegistrationYears] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [showProviderSetup, setShowProviderSetup] = useState(false);
+  const [setupProvider, setSetupProvider] = useState('');
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
