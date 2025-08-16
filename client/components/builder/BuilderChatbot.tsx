@@ -75,13 +75,28 @@ export function BuilderChatbot({
       const welcomeMessage: ChatMessage = {
         id: 'welcome',
         type: 'bot',
-        content: "👋 Hi! I'm your AI website building assistant. I can help you create amazing websites with suggestions, layouts, and smart automation. What would you like to build today?",
+        content: "🤖 Hi! I'm your AI website building assistant. I can build complete, professional websites for you automatically! Just tell me what kind of site you need.",
         timestamp: new Date(),
+        actions: [
+          {
+            id: 'full-website-builder',
+            label: '🚀 Build Complete Website',
+            type: 'component',
+            icon: <Wand2 className="h-4 w-4" />,
+            action: () => {
+              setShowAdvancedBuilder(true);
+              toast({
+                title: '🎯 Advanced Website Builder Activated!',
+                description: 'Choose from professional templates below.'
+              });
+            }
+          }
+        ],
         suggestions: [
-          "Build a landing page",
-          "Create an e-commerce site", 
-          "Design a portfolio",
-          "Set up a blog"
+          "Build luxury e-commerce store",
+          "Create developer portfolio",
+          "Design SaaS landing page",
+          "Build business website"
         ]
       };
       setMessages([welcomeMessage]);
